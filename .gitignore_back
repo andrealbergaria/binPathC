@@ -1,0 +1,10 @@
+*.o
+upload.sh
+printAllCombs
+license
+Makefile
+libbinpath.a
+.git
+.cproject
+a
+aes
