@@ -1,34 +1,35 @@
 #include "util.h"
 #include "aes256.h"
-#include <time.h>
 
 
-
-u_char pos_1[] = {  1,9, 17, 25, 33, 41, 49, 57, 65, 73, 81, 89, 97, 105, 113, 121, 129, 137, 145, 153, 161, 169, 177, 185, 193, 201, 209, 217, 225, 233, 241, 249 };
-u_char pos_2[] = {  2,10, 18, 26, 34, 42, 50, 58, 66, 74, 82, 90, 98, 106, 114, 122, 130, 138, 146, 154, 162, 170, 178, 186, 194, 202, 210, 218, 226, 234, 242, 250 };
-u_char pos_3[] = {  3,11, 19, 27, 35, 43, 51, 59, 67, 75, 83, 91, 99, 107, 115, 123, 131, 139, 147, 155, 163, 171, 179, 187, 195, 203, 211, 219, 227, 235, 243, 251 };
-u_char pos_4[] = {  4,12, 20, 28, 36, 44, 52, 60, 68, 76, 84, 92, 100, 108, 116, 124, 132, 140, 148, 156, 164, 172, 180, 188, 196, 204, 212, 220, 228, 236, 244, 252};
-u_char pos_5[] = {  5,13, 21, 29, 37, 45, 53, 61, 69, 77, 85, 93, 101, 109, 117, 125, 133, 141, 149, 157, 165, 173, 181, 189, 197, 205, 213, 221, 229, 237, 245, 253};
-u_char pos_6[] = {  6,14, 22, 30, 38, 46, 54, 62, 70, 78, 86, 94, 102, 110, 118, 126, 134, 142, 150, 158, 166, 174, 182, 190, 198, 206, 214, 222, 230, 238, 246, 254};
-u_char pos_7[] = {  7,15, 23, 31, 39, 47, 55, 63, 71, 79, 87, 95, 103, 111, 119, 127, 135, 143, 151, 159, 167, 175, 183, 191, 199, 207, 215, 223, 231, 239, 247, 255 };
-u_char pos_8[] = {  8,16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248,0 };
 
 // cipher text to translate
-u_char cipherText[32];
 
-
-void readFileToArray() {
+u_char* readFileToArray(FILE *ptr) {
 	FILE *cipherFile;
 	int retValue;
-
-	cipherFile = fopen( "out", "rb");
+	u_char cipherText = (u_char *) malloc(16);
+	cipherFile = fopen( "files/cipherText", "rb");
 
 	if (cipherFile == NULL) {
 		perror("\nCouldnt open cipher text file");
 		exit(-1);
 	}
 
-	fread(cipherText,32,1,cipherFile);
+	retValue = fseek(cipherFile,16,SEEK_SET);
+
+	if (retValue!=0) {
+		printf("\nCoultn fseek");
+		exit(-1);
+	}
+
+	retValue = fread(cipherText,1,16,cipherFile);
+
+	if (retValue != 16 ) {
+		printf("\nCoulndt read 16 bytes of cipher Text");
+		exit(-1):
+	}
+
 	retValue = fclose(cipherFile);
 
 	if (retValue != 0) {
@@ -36,6 +37,7 @@ void readFileToArray() {
 		exit(-1);
 	}
 
+	return cipherText;
 
 
 }
