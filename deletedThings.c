@@ -66,11 +66,7 @@ void testingArray() {
             
         }
     }
-    
-    for (int n = 0 ; n < numOfRows ; n++) {
-        
-        
-    }
+
     
     
     
@@ -109,79 +105,9 @@ void assignArray(unsigned char positionToColumn[numPositions][numOfRows]) {
     u_char secBytes[8][8];
     secBytes[0] = 1 and 
     secBytes[1] = 1;
-    for (int i = 0 ; i < 31; i++) {
-                secBytes[0][i] = 
-                arr[0] += 8;
-                arr[1] += 8;
-                arr[2] += 8;
-                arr[3] += 8;
-                arr[4] += 8;
-                arr[5] += 8;
-                arr[6] += 8;
-                arr[7] += 8;
-    }
-    
-	void TestIteration() {
-    
-    u_int pos1[32];
-    u_int pos2[32];
-    u_int pos3[32];
-    u_int pos4[32];
-    u_int pos5[32];
-    u_int pos6[32];
-    u_int pos7[32];
-    u_int pos8[32];
 
+    
 
-    // Populate array (populate 1 byte)
-    pos1[0] = 1;
-    pos2[0] = 2;
-    pos3[0] = 3;
-    pos4[0] = 4;
-    pos5[0] = 5;
-    pos6[0] = 6;
-    pos7[0] = 7;
-    pos8[0] = 8;
-    for (int i = 0 ; i < 31; i++) {
-                pos1[i] += 8;
-                pos2[i] += 8;
-                pos3[i] += 8;
-                pos4[i] += 8;
-                pos5[i] += 8;
-                pos6[i] += 8;
-                pos7[i] += 8;
-                pos8[i] += 8;
-    }
-    
-    // going for 2 bytes
-    // 
-    pos1 pos1
-    pos1 pos2
-    pos1 pos3
-    pos1 .
-    
-    printf("\n");
-    
-    u_char position[8][8]; 
-    
-    [0][1]
-    pos1    pos1
-    pos1    pos2
-    pos1    pos3
-    pos1
-    // populate first elemen of array
-    for (int i = 1 ; i < 9; i++) {
-        position[0][0]= 
-        
-          
-    }
-    
-    
-    
-    for (int i = 0; i < 8;i++) {
-        
-    }
-    
     
     
     

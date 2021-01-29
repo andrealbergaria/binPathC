@@ -25,6 +25,9 @@
 #define uint8_t  unsigned char
 #endif
 
+#define cipherTextFile "/home/andre/workspace_c/binPathC/files/cipherText"
+
+
 #ifdef __cplusplus
 extern "C" { 
 #endif
@@ -41,14 +44,6 @@ extern "C" {
     void aes256_encrypt_ecb(aes256_context *, uint8_t * /* plaintext */);
     void aes256_decrypt_ecb(aes256_context *, uint8_t * /* cipertext */);
     // me
-    void printKey(unsigned char *callingFunction,unsigned char *key,int lenOfKey);
-    int encrypt_file(char *buf,aes256_context aesCon,char *file);
-    int decrypt_file(aes256_context aesCon,char *file);
-
-
-
-
-#ifdef __cplusplus
-}
-#endif
+    void encrypt_file(u_char *buf,aes256_context aesCon);
+    void decrypt_file(aes256_context aesCon);
 

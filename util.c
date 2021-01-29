@@ -8,7 +8,7 @@
 u_char* readFileToArray(FILE *ptr) {
 	FILE *cipherFile;
 	int retValue;
-	u_char cipherText = (u_char *) malloc(16);
+	u_char *cipherText = (u_char *) malloc(16);
 	cipherFile = fopen( "files/cipherText", "rb");
 
 	if (cipherFile == NULL) {
@@ -27,7 +27,7 @@ u_char* readFileToArray(FILE *ptr) {
 
 	if (retValue != 16 ) {
 		printf("\nCoulndt read 16 bytes of cipher Text");
-		exit(-1):
+		exit(-1);
 	}
 
 	retValue = fclose(cipherFile);

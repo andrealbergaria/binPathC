@@ -1,42 +1,53 @@
-all: printAllCombs binPath aes256
+CFLAGS= -Wall -pedantic -std=c99 -g
 
-printAllCombs: printAllCombs.o
-	cc printAllCombs.o util.o -lm -g -o printAllCombs
+libbinpath.a:	*.o 
+ar -cv libbinpath.a *.o
+
+
+.PHONY : all clean
+all: printAllCombs bruteForcePlainText aes256 decrypt encrypt addPositions
+
+addPositions: addPositions.o
+	cc $(CFLAGS) addPositions.o -o addPositions
+
+addPositions.o: addPostitions.c
+	cc $(CFLAGS) addPositions.c -c -o addPositions.o
 
 printAllCombs.o: util.o printAllCombs.c
-	gcc printAllCombs.c -g -c -o printAllCombs.o
+	cc $(CFLAGS) printAllCombs.c -c -o printAllCombs.o
 
-aes256: aes256.o libbinpath.a
-	cc aes256.o -lbinpath -g -L. -o aes
+printAllCombs: printAllCombs.o
+	cc $(CFLAGS) printAllCombs.o util.o  -o printAllCombs
+
+
+aes256.o: aes256.c aes256.h decrypt.o encrypt.o
+	cc $(CFLAGS) decrypt.o encrypt.o -c -o aes256.o
 	
+aes256: aes256.o
+	cc $(CFLAGS) aes256.o -o aes256
 
-binPath: binPath.o libbinpath.a
-	cc binPath.o -lbinpath -L. -lm -o binPath
+bruteForcePlainText: bruteForcePlainText.o bruteForcePlainText.h
+	cc $(CFLAGS) bruteForcePlainText.c -o bruteForcePlainText
+	
 # cc -Wall -pg binPath.c util.c crypto.c -lm -lcrypt -o binPathProfiler
 
-binPath.o: binPath.c
-	cc binPath.c -g -c -o binPath.o
-
-getValues: getBinariesFromDecimals.o
-	cc getBinariesFromDecimals.o -lbinpath -L. -o getValues
+bruteForcePlainText.o: bruteForcePlainText.c
+	cc $(CFLAGS) bruteForcePlainText.c -c -o bruteForcePlainText.o
 	
-util.o: util.c util.h
-	cc -c util.c -g -o util.o
-
-aes256.o: aes256.c aes256.h
-	cc aes256.c -c -g -o aes256.o
+util.o: util.c 
+	cc $(CFLAGS) -c util.c -o util.o
 	
-aes256_lib.o: aes256_lib.c
-	cc aes256_lib.c -c -g -o aes256_lib.o	
+aes256_lib.o: aes256.h aes256.o
+	cc $(CFLAGS) aes256_lib.c -c -o aes256_lib.o	
+
+decrypt.o: decrypt.c aes256.h aes256_lib.o
+	cc $(CFLAGS) decrypt.c -c -o decrypt.o
+
+encrypt.o: encrypt.c aes256.h aes256_lib.o
+	cc $(CFLAGS) encrypt.c -c -o encrypt.o
+	
 clean:
-	rm -f binPath.o util.o aes256.o 
-	rm -f libbinpath.o
-	rm -f libbinpath.a
+	rm -f *.o 
 	rm -f binPathApp
-	
-	
-libbinpath.a: util.o aes256.o aes256_lib.o
-	ar -cvr libbinpath.a util.o aes256.o aes256_lib.o
-
-getBinariesFromDecimals.o: getBinariesFromDecimals.c
-	cc -c getBinariesFromDecimals.c -g -lbinpath -o getBinariesFromDecimals.o
+	rm aes256
+	rm aes
