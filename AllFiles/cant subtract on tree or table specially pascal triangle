@@ -1,0 +1,10 @@
+	3    3      4  -  1 (infinite values, so can't have a table..a table or tree can only add on elements)
+        		   3C1 = 3C2 = 4C1 - 1C1
+        		   				2 	+ 1
+        		   			 =  2C1 + 1C
+        		   			  	1   1      1
+        		   			 = 1C1 + 1C1 + 1C1
+        		   			 = 
+        		   		
+        		
+        		adding combinations works..but not subtracting combinations (infinte values) 

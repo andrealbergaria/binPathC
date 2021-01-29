@@ -1,0 +1,38 @@
+1 × 6 = 6, so 1 and 6 are factors of 6
+1 × 6 = 6, so 6 is a multiple of 6
+2 × 6 = 12, so 12 is a multiple of 6
+
+
+If prime number only has exactly two divisors, how can it be divisor of other number?
+
+  
+  prime number = divisor of itself  or 1.
+
+
+The divisors of a natural number n are the natural numbers that divide n evenly.
+
+
+
+has two divisors, 
+is a divisor
+
+is a divisor (m) = n/m 
+two divisors (m) = m/p , m/p1  
+divisors of (n) = m
+
+======
+Se m (prime number) so divide estes (p e p1)  , nao pode dividir os outros (n)
+
+=======
+If m (prime number) divides for example p, and p1, then it can't divide others, since its prime.
+=========
+ 
+
+difference between having one divisor, and being a divisor
+
+
+If q divide's m and m divides n, then by transitive, n / q
+
+ 
+ prime number only divides 2 numbers. How come it divides other numbers?
+ 

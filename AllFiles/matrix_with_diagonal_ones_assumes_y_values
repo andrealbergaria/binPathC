@@ -1,0 +1,31 @@
+a)     {1,x,x,x}	
+ 	   [x,1,x,x)  	
+       (x,x,1,x)  			   
+       (x,x,x,1)			 	
+      				
+      					 	Tem a ver com arranjos
+      					 	
+      					 	
+      							(x,y) coordenadas da matriz
+      							numberOfLines =4
+      						a)	Line number 1 = (1,1)
+      						a) Line number 2 = (2,2)
+							a)	Line number 4 = (4,4)
+					
+							   posicao(1,2) = num linhas 1 , pos 2
+							   X=1 Y=1 => 1
+							   X=1 Y=k (0,1) ..what is k?
+							   
+							   y=1 y=2 y=3 y=4
+							   [ 1 x x x ]
+							   
+							   Para X=1 ....Y = K *  (0,1), k > 1
+							   
+							   x=1 y=2
+							   x=2 y=2
+							   
+							   se eu scannar por ones, obtenho o y ,visto que eles estao em (2,2)(3,3)(4,4) ..
+							   y=2 , (line1,y)
+							   
+							   
+							   	(X,Y) => ( 1 , 1 * (0,1))

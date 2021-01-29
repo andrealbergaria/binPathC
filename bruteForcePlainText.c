@@ -44,16 +44,16 @@
 
                      // Access nth byte same site      int x = ((unsigned char *)(&number))[n];
                      
-                  int mask =   0b00000001     /
-                               00000001    /
-                               00000001     /
+                  int mask =   0b00000001
+                               00000001
+                               00000001
                                00000001;
                   
                   int pos2 = pos1 | mask;
                   printf("\n");
                   printIntBits(pos2);
                   printf("\n");
-               /    
+
                                         
                 /*
                            

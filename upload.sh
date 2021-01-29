@@ -13,4 +13,4 @@ git push https://github.com/andrealbergaria/binPathC
 
 
 
-. /home/andrec/workspace_3_8/binPathC/backup.sh
+. /home/andrec/workspace_c/binPathC/backup.sh

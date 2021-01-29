@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #ifndef uint8_t
 #define uint8_t  unsigned char
+#define u_char  unsigned char
 #endif
 
 #define cipherTextFile "/home/andre/workspace_c/binPathC/files/cipherText"

@@ -1,0 +1,13 @@
+public static void AlgebraError() {
+		double Xnegative = -3;
+		double X2 = Math.pow(Xnegative,2);
+		double X3 = Math.pow(Xnegative,3);
+		
+		if (X2 > 0)
+			System.err.println("\n X2 is bigger than 0");
+		System.out.println("   "+X3);
+		if (X2< X3) {
+			System.err.println("X neagttive less that X2");
+		}
+
+	}

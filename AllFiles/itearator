@@ -1,0 +1,5 @@
+for (int i=0; i < limit;i++) {
+
+for running stuff inside method, use another variable, and keep 
+incrementing, that variable until you are satisfacted and then set the value 
+back to 0

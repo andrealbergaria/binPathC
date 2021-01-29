@@ -1,0 +1,34 @@
+				total area of rectangle		another area of triangle
+(a1,...,am) -> a1v1 							+ a2v2 + a3v3        Sum of area of rectangles
+			
+			a1v1 = Area of the rectangle
+
+distributive a* (b+c) = (a.b)+ (a.c) 
+
+for example a1 = 2 e a2= 3 
+			|---|	   |----------|
+		a1	| 	|	a2 |          |
+			|---|	   |----------|
+			 v1				v2
+
+		|-----|
+		|	  |
+a2		|	  |
+a1		| 	  |
+		|---- |
+			v1 +v2
+
+		(a1+a2) * (v1+v2)
+		
+		
+		5 * (v1+v2)
+		
+		Area da soma dos rectangulos = 5 * (v1+v2) = 2(v1) + 3(v2) 
+							
+		5v1 + 5v2 = 2v1 + 3v2
+		
+		5v1 - 2v1 - 5v2 = 3v2
+		
+		3v1= 8v2
+		v1 = 8/3 v2
+		

@@ -1,0 +1,12 @@
+The Turing machine is equal to the binary system (change position by one, and modifying a cell), inhertis the properites of the binary system
+. For example XOR and OR. Instead of bits, we can use symbols (as in [a,b,c] , the ABC SYSTEM,. The symbols could be bits. (like a= 01).
+To change the position, one increments or substract one unit.If A+1 = B.
+The ABC SYSTEM, uses Combinations, and others, so the machine also inherits the properties of the ABC SYSTEM.
+We can also use inversions.To permute values, permute posX with posX+1 or posX-1 , with all position.this is transitive
+
+
+TODO
+PosX + 1  = a + 1 = b. So the head moves right, so the value 
+
+1	2	3
+a	a   b

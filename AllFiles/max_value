@@ -1,0 +1,78 @@
+
+f(x) = x
+
+x = {1,2,3,4}
+f(x) = {1,2,3,4}
+
+Ao dizer que uma variavle tem valor, significa que o range que ela pode aceitar
+deb ytes
+ou seja
+
+int maxValue=3; Se quiser guardar quatro pode?
+ous eja o tamanho maximo duma variavel
+
+Maximum  number = 3
+the size of the domain, is the maximum number can achieve
+
+para x inteiro , pode tomar infinitos valores
+
+f(x) = 4 ? nao pode (se o valor maximo for 3)
+
+{1,2,3] size of domain = 3...maximum value it can accept
+
+f(4) = nao existe
+
+so , if we have a non infinite maximum value, that number is the size of domain
+por exemplo considerango funções em intervalos, em que haja uma sucessao
+
+a sucessao esta limitada pelo valor maximo,apenas toma valores entre o primeiro
+elemento e o ultimo
+
+[1,2,4,5,6]
+
+f(x) = 1
+f(x) = 2
+f(x) = 4
+f(x) = 5
+f(x) = 6
+
+Para inteiros, so falta um elemento, para sucessões é bom 
+
+[1....6] pode tomar [2,3,4,5]
+
+f(x) = 6-x
+
+
+
+so it has only one position left in this case 3 (f(x) = 3), it can't accept more because
+the max it can find is 6
+
+so pode tomar valores abaixo dos 6
+int six = 6; (can hold 6 positions) 
+
+
+
+tuples ? sucession are tuples
+
+[1....3] size of domain 3,considering sucessions, the sucession stops?!
+
+Suc
+f(x) = x+2;
+
+considering integers
+Dom(f(x)) = [0....inf]
+
+
+Integer.MAXVALUE = pode ser escrito duma vez? ou precisa de bytes
+
+pode conter[1....2147483647] o numero superior nao pode ser guardado
+so podem existir 2147483647 ints 
+
+numero is part of the interval , and specifies the max numbers....
+limita a variavel , e determina quantos int existem
+
+ [a...b], a always belong to B 
+  
+  
+  value indicate how many bytes , can a variable have
+  b fits on variable, 

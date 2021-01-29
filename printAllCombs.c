@@ -2,7 +2,7 @@
 
 
 int main(int argc,char *argv[]) {
-    u_int threeBits[500];
+    unsigned int threeBits[500];
     if (argc != 4) {
         printf(" ARG[1] -> number_of_bits_to_print\n");
         printf(" ARG[2] -> start_byte\n");
@@ -16,7 +16,7 @@ int main(int argc,char *argv[]) {
     printf("\nUsing %i bits\n",numberOfBits);
     printf("\nStarted printing at %i",startByte);
     
-    u_int s = pow(2,numberOfBits);
+    unsigned int  s = pow(2,numberOfBits);
     
     printf("\nNumber of elems printed %i\n",s);
 

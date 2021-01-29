@@ -1,0 +1,52 @@
+FIRST TEST)
+A *A * A =(A + A + A)    * K
+
+
+----------
+Why sum 3 A's ?  
+A+A+A + A+A+A +....						A+A+A+ A + A + A....
+------------------------------- +		------------------- 
+A times 									A times
+----------------------------------------------------------
+				A Times
+
+
+--------------------------------------------------
+REFERENCE,x^2,x^3,x^4
+
+X^1
+x
+
+X^2
+
+x(x) CASO ESPECIAL (ao quadrado)
+x(x)
+
+X^3
+
+CASO (X^3)
+
+x *x *x 
+
+x(x) * x
+x(x) + x(x) + x(x)  => reduziu uma multiplicação em soma.....expoente indica o numero de somas necessarias
+    	
+
+CASO (X^4)
+
+x*x*x*x
+
+x(x) + x(x) + x(x) +x(x)
+
+
+
+example
+3x+4x^2 + 5x^3 = 0
+		
+		3x+4x*x + 5x*x*x = 0
+		
+		(x+x+x) + (x+x+x+x)+(x+x+x+x) + (x+x+x+x+x) + (x+x+x+x+x) (x+x+x+x+x)
+		16x +10x = 0
+		
+		
+	  
