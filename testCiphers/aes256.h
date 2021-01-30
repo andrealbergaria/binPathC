@@ -45,6 +45,8 @@ extern "C" {
     void aes256_done(aes256_context *);
     void aes_expandEncKey(uint8_t *k, uint8_t *rc);
 
+    void longToCharArray(long l,int *key);
+   	long charArrayToLong(long l,int *key);
 
 
     void aes256_encrypt_ecb(aes256_context *, uint8_t * /* plaintext */);
@@ -54,4 +56,8 @@ extern "C" {
 
     void encrypt_file(u_char *buf,unsigned key);
     void decrypt_file(u_char *cipherText);
+    void longToCharArray(long l,int *key);
+    long charArrayToLong(long l,int *key);
+
+
 

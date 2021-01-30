@@ -13,11 +13,11 @@ char *getDate() {
 }
 
 // cipher text to translate
-u_char writeFile(int min,int max,char *filename) {
+u_char writeToFile(int min,int max,char *filename) {
 	char arr[100];
 	sprintf(arr,"Min : %i , Max : %i , ::: %s",min,max,getDate);
 
-	FILE *fPtr = fopen(filename,"wb");
+	FILE *fPtr = fopen(filename,"a");
 
 	int arrSize = strlen(arr);
 	int retValue = fwrite(arr, 1 , arrSize, fPtr);
@@ -33,28 +33,21 @@ u_char writeFile(int min,int max,char *filename) {
 		return 0;
 
 }
-u_char* readFileToArray(FILE *ptr) {
+u_char* readFileToArray(char *filename) {
 	FILE *cipherFile;
 	int retValue;
-	u_char *cipherText = (u_char *) malloc(16);
-	cipherFile = fopen( "files/cipherText", "rb");
+	u_char *cipherText = (u_char *) malloc(32);
+	cipherFile = fopen( filename, "rb");
 
 	if (cipherFile == NULL) {
 		perror("\nCouldnt open cipher text file");
 		exit(-1);
 	}
 
-	retValue = fseek(cipherFile,16,SEEK_SET);
+	retValue = fread(cipherText,1,32,cipherFile);
 
-	if (retValue!=0) {
-		printf("\nCoultn fseek");
-		exit(-1);
-	}
-
-	retValue = fread(cipherText,1,16,cipherFile);
-
-	if (retValue != 16 ) {
-		printf("\nCoulndt read 16 bytes of cipher Text");
+	if (retValue != 32 ) {
+		printf("\nCoulndt read 32 bytes of cipher Text");
 		exit(-1);
 	}
 
