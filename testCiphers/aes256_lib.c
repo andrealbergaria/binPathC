@@ -326,15 +326,15 @@ void aes256_decrypt_ecb(aes256_context *ctx, uint8_t *buf)
 {
     uint8_t i, rcon;
 
-    aes_addRoundKey_cpy(buf, ctx->deckey, ctx->key);
-    aes_shiftRows_inv(buf);
-    aes_subBytes_inv(buf);
+    aes_addRoundKey_cpy(buf, ctx->deckey, ctx->key); // doesnt change ctx
+    aes_shiftRows_inv(buf); // doesnt change contex
+    aes_subBytes_inv(buf); // doesnt change ctx
 
     for (i = 14, rcon = 0x80; --i;)
     {
         if( ( i & 1 ) )
         {
-            aes_expandDecKey(ctx->key, &rcon);
+            aes_expandDecKey(ctx->key, &rcon); // change ctx key
             aes_addRoundKey(buf, &ctx->key[16]);
         }
         else aes_addRoundKey(buf, ctx->key);
