@@ -1,6 +1,6 @@
-03:07:53 **** Build of configuration Release for project binPathC ****
+20:11:28 **** Incremental Build of configuration Release for project binPathC ****
 /usr/bin/make all 
 make: *** No rule to make target 'all'.  Stop.
 
-03:07:54 Build Finished (took 1s.63ms)
+20:11:29 Build Finished (took 651ms)
 
