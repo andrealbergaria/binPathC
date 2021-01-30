@@ -38,3 +38,7 @@ void trying8Elems();
 
 bool next_permutation(int array[], size_t length);
 void permute(char *a, int l, int r);
+
+u_char* readFileToArray(char *filename);
+u_char writeToFile(int min,int max,char *filename);
+u_char getDate();

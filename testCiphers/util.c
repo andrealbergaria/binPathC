@@ -2,7 +2,7 @@
 #include "aes256.h"
 
 
-char *getDate() {
+u_char *getDate() {
 		time_t t;
 		time(&t);
 

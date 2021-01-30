@@ -8,10 +8,10 @@
 
 int main() {
 	u_char *cipherText = (u_char *) malloc(32);
-	int retValue;
+
 
 	char *filename="/home/andrec/workspace_c/binPathC/testCiphers/limits";
-	cipherText = readFileToArray(filename) {
+	cipherText = readFileToArray(filename);
 	//u_char key[] = {0x61,0x61,0x61,0x61};
 
 
@@ -86,11 +86,8 @@ void decrypt_file(u_char *cipherText) {
 	ctx.key[1] = 1;
 	ctx.key[2] = 2;
 	ctx.key[3] = 3;
-	/*ctx.key[1]=0x1;
-	ctx.key[2]=0x2;
-	ctx.key[3]=0x3;
-*/
-	printKey(ctx.key,1);
+
+	printKey(ctx.key,32,1);
 	memcpy(ctx.deckey,ctx.key,32);
 	memcpy(ctx.enckey,ctx.key,32);
 
@@ -123,12 +120,12 @@ void decrypt_file(u_char *cipherText) {
 
 		for (register int l=min ; l < max ;l++) {
 			printf("Min : %i ... Max : %i .... NumDigits : %i",l,max,count_digits(l));
-			longToCharArray(l,&ctx.key,32);
+			longToCharArray(l,&ctx.key);
 			// Multiple = k * interval
 			if (multiple == (4096 * l)) {
 				printf("\n%s",getDate());
 				printf("\nSearched %i of a total of %i",l,max);
-				printKey(&ctx,1);
+				printKey(ctx.key,32,1);
 				multiple+=131072;
 				char *filename = "/home/andrec/workspace_c/binPathC/testCiphers/limits";
 				writeToFile(min,max,filename);

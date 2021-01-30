@@ -1,6 +1,7 @@
-20:11:28 **** Incremental Build of configuration Release for project binPathC ****
-/usr/bin/make all 
+22:52:57 **** Incremental Build of configuration Release for project binPathC ****
+make /home/andrec/workspace_c/binPathC/testCiphers all 
+make: Nothing to be done for '/home/andrec/workspace_c/binPathC/testCiphers'.
 make: *** No rule to make target 'all'.  Stop.
 
-20:11:29 Build Finished (took 651ms)
+22:52:57 Build Finished (took 737ms)
 
