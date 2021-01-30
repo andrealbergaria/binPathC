@@ -20,13 +20,6 @@
 #include <stdio.h>
 #include "aes256.h"
 
-#define DUMP(s, i, buf, sz)  {printf(s);                   \
-                              for (i = 0; i < (sz);i++)    \
-                                  printf("%02x ", buf[i]); \
-                              printf("\n");}
-
-
-
 int main (int argc, char *argv[])
 {
     aes256_context ctx; 

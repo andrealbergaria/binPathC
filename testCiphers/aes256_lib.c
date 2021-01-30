@@ -32,8 +32,10 @@ static void aes_shiftRows(uint8_t *);
 static void aes_shiftRows_inv(uint8_t *);
 static void aes_mixColumns(uint8_t *);
 static void aes_mixColumns_inv(uint8_t *);
-static void aes_expandEncKey(uint8_t *, uint8_t *);
 static void aes_expandDecKey(uint8_t *, uint8_t *);
+// Change of static to only void, to use decrypt.c to call it
+//static void aes_expandEncKey(uint8_t *k, uint8_t *rc);
+void aes_expandEncKey(uint8_t *k, uint8_t *rc);
 #ifndef BACK_TO_TABLES
 static uint8_t gf_alog(uint8_t);
 static uint8_t gf_log(uint8_t);
@@ -281,27 +283,6 @@ void aes_mixColumns_inv(uint8_t *buf)
 } /* aes_mixColumns_inv */
 
 /* -------------------------------------------------------------------------- */
-static void aes_expandEncKey(uint8_t *k, uint8_t *rc)
-{
-    register uint8_t i;
-
-    k[0] ^= rj_sbox(k[29]) ^ (*rc);
-    k[1] ^= rj_sbox(k[30]);
-    k[2] ^= rj_sbox(k[31]);
-    k[3] ^= rj_sbox(k[28]);
-    *rc = rj_xtime( *rc);
-
-    for(i = 4; i < 16; i += 4)  k[i] ^= k[i - 4],   k[i + 1] ^= k[i - 3],
-                                            k[i + 2] ^= k[i - 2], k[i + 3] ^= k[i - 1];
-    k[16] ^= rj_sbox(k[12]);
-    k[17] ^= rj_sbox(k[13]);
-    k[18] ^= rj_sbox(k[14]);
-    k[19] ^= rj_sbox(k[15]);
-
-    for(i = 20; i < 32; i += 4) k[i] ^= k[i - 4],   k[i + 1] ^= k[i - 3],
-                                            k[i + 2] ^= k[i - 2], k[i + 3] ^= k[i - 1];
-
-} /* aes_expandEncKey */
 
 /* -------------------------------------------------------------------------- */
 void aes_expandDecKey(uint8_t *k, uint8_t *rc)
@@ -328,23 +309,12 @@ void aes_expandDecKey(uint8_t *k, uint8_t *rc)
 
 
 /* -------------------------------------------------------------------------- */
-void aes256_init(aes256_context *ctx, uint8_t *k)
-{
-    uint8_t rcon = 1;
-    register uint8_t i;
 
-    for (i = 0; i < sizeof(ctx->key); i++) ctx->enckey[i] = ctx->deckey[i] = k[i];
-    for (i = 8; --i;) aes_expandEncKey(ctx->deckey, &rcon);
-} /* aes256_init */
 
-/* -------------------------------------------------------------------------- */
-void aes256_done(aes256_context *ctx)
-{
-    register uint8_t i;
 
-    for (i = 0; i < sizeof(ctx->key); i++)
-        ctx->key[i] = ctx->enckey[i] = ctx->deckey[i] = 0;
-} /* aes256_done */
+
+
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -409,5 +379,51 @@ void aes256_encrypt_ecb(aes256_context *ctx, uint8_t *buf)
 } /* aes256_encrypt */
 
 
+/**
+ *
+ * What was modified
+ *
+ */
+
+/* -------------------------------------------------------------------------- */
+void aes256_done(aes256_context *ctx)
+{
+    register uint8_t i;
+
+    for (i = 0; i < sizeof(ctx->key); i++)
+        ctx->key[i] = ctx->enckey[i] = ctx->deckey[i] = 0;
+} /* aes256_done */
 
 
+
+void aes256_init(aes256_context *ctx, uint8_t *k)
+{
+    uint8_t rcon = 1;
+    register uint8_t i;
+
+    for (i = 0; i < sizeof(ctx->key); i++) ctx->enckey[i] = ctx->deckey[i] = k[i];
+    for (i = 8; --i;) aes_expandEncKey(ctx->deckey, &rcon);
+} /* aes256_init */
+// changed static (all function on this code seem to have it, so i can call it from decrypt.c
+//static void aes_expandEncKey(uint8_t *k, uint8_t *rc)
+void aes_expandEncKey(uint8_t *k, uint8_t *rc)
+{
+    register uint8_t i;
+
+    k[0] ^= rj_sbox(k[29]) ^ (*rc);
+    k[1] ^= rj_sbox(k[30]);
+    k[2] ^= rj_sbox(k[31]);
+    k[3] ^= rj_sbox(k[28]);
+    *rc = rj_xtime( *rc);
+
+    for(i = 4; i < 16; i += 4)  k[i] ^= k[i - 4],   k[i + 1] ^= k[i - 3],
+                                            k[i + 2] ^= k[i - 2], k[i + 3] ^= k[i - 1];
+    k[16] ^= rj_sbox(k[12]);
+    k[17] ^= rj_sbox(k[13]);
+    k[18] ^= rj_sbox(k[14]);
+    k[19] ^= rj_sbox(k[15]);
+
+    for(i = 20; i < 32; i += 4) k[i] ^= k[i - 4],   k[i + 1] ^= k[i - 3],
+                                            k[i + 2] ^= k[i - 2], k[i + 3] ^= k[i - 1];
+
+} /* aes_expandEncKey */

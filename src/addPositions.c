@@ -26,10 +26,10 @@ void AddEightToPositions() {
 
  for (int i = 0 ; i < intSize; i++) {
 
-                arr[0] += 8;
-                arr[1] += 8;
-                arr[2] += 8;
-                arr[3] += 8;
+                arr[0] += 4;
+                arr[1] += 4;
+                arr[2] += 4;
+                arr[3] += 4;
                 if (i * interval ==multiple){
                 	multiple+=interval;
                 	printf("\nKey test %i",i);

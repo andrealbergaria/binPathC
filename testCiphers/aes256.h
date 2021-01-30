@@ -21,17 +21,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #ifndef uint8_t
 #define uint8_t  unsigned char
 #define u_char  unsigned char
 #endif
 
-#define cipherTextFile "/home/andrec/workspace_c/binPathC/files/cipherText"
-
 
 #ifdef __cplusplus
 extern "C" { 
 #endif
+
+#define intSize 4294967296
 
     typedef struct {
         uint8_t key[32]; 
@@ -42,11 +43,15 @@ extern "C" {
 
     void aes256_init(aes256_context *, uint8_t * /* key */);
     void aes256_done(aes256_context *);
+    void aes_expandEncKey(uint8_t *k, uint8_t *rc);
+
+
+
     void aes256_encrypt_ecb(aes256_context *, uint8_t * /* plaintext */);
     void aes256_decrypt_ecb(aes256_context *, uint8_t * /* cipertext */);
     // me
 
 
     void encrypt_file(u_char *buf,unsigned key);
-    void decrypt_file(aes256_context aesCon,u_char *cipherText);
+    void decrypt_file(u_char *cipherText);
 

@@ -32,7 +32,7 @@ static void aes_shiftRows(uint8_t *);
 static void aes_shiftRows_inv(uint8_t *);
 static void aes_mixColumns(uint8_t *);
 static void aes_mixColumns_inv(uint8_t *);
-static void aes_expandEncKey(uint8_t *, uint8_t *);
+void aes_expandEncKey(uint8_t *, uint8_t *);
 static void aes_expandDecKey(uint8_t *, uint8_t *);
 #ifndef BACK_TO_TABLES
 static uint8_t gf_alog(uint8_t);
