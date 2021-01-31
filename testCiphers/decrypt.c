@@ -4,9 +4,9 @@
 #define cipherTextFile "/home/andrec/workspace_c/binPathC/testCiphers/cipherTextRaw"
 
 
-
-
 int main() {
+
+
 	u_char *cipherText = (u_char *) malloc(32);
 
 
@@ -31,37 +31,8 @@ int main() {
 
 }
 
-void printKey(u_int8_t key[]  ,int sizeKey,char hexa) {
-	printf("\nKey : [ ");
-	for (int i = 0;i < sizeKey; i++)
-		if (hexa==1)
-			printf("%02x ",key[i]);
-		else
-			printf("%i ",key[i]);
-	printf(" ] ");
-}
 
-//https://stackoverflow.com/questions/6687467/converting-char-array-to-long-in-c
-void longToCharArray(long l,int *key) {
-
-	key[0] = l         & 0xFF;
-	key[1] = (l >>  8) & 0xFF;
-	key[2] = (l >> 16) & 0xFF;
-	key[3] = (l >> 24) & 0xFF;
-
-}
-
-
-long charArrayToLong(long l,int *key) {
-	l = key[0] | (key[1] << 8) | (key[2] << 16) | (key[3] << 24);
-	return l;
-
-
-}
-//https://stackoverflow.com/questions/9721042/count-number-of-digits-which-method-is-most-efficient
-int count_digits(int arg) {
-    return snprintf(NULL, 0, "%d", arg) - (arg < 0);
-}
+//https://stackoverflow.com/questions/8304259/formatting-struct-timespec
 
 void decrypt_file(u_char *cipherText) {
 
@@ -100,37 +71,50 @@ void decrypt_file(u_char *cipherText) {
 
 
 
-    getDate();
 
     	//int numCombs = intSize/4;
 		//int numCombs = 65536;
     int multiple=131072;
     int interval = 4096;
     // Check for 4 bytes
-    int maxAttempt= 256*256*256*32; // brutesforce 4 bytes (256 can't be because compiler says overflow
+ //   int maxAttempt= 256*256*256*32;
+    // brutesforce 4 bytes (256 can't be because compiler says overflow
 
-    int totalCombinations = maxAttempt/256;
+    //int totalCombinations = maxAttempt/256;
 
-    int writeTime=0;
+
     //https://stackoverflow.com/questions/6687467/converting-char-array-to-long-in-c
 
     aes256_context temp;
     int min=0;
-    int max=interval;
+    int max=65536;
 
-		for (register int l=min ; l < max ;l++) {
-			printf("Min : %i ... Max : %i .... NumDigits : %i",l,max,count_digits(l));
-			longToCharArray(l,&ctx.key);
+
+    char date[200];
+    utc_system_timestamp(date);
+    printf("\n%s",date);
+
+    unsigned int l=min;
+
+		for ( unsigned long l=min; l < max ;l++) {
+
+
+
+			longToCharArray(l,(unsigned char*) ctx.key);
 			// Multiple = k * interval
 			if (multiple == (4096 * l)) {
-				printf("\n%s",getDate());
-				printf("\nSearched %i of a total of %i",l,max);
+				utc_system_timestamp(date);
 				printKey(ctx.key,32,1);
-				multiple+=131072;
-				char *filename = "/home/andrec/workspace_c/binPathC/testCiphers/limits";
-				writeToFile(min,max,filename);
-			}
 
+				printf("Elapsed : %s \nMin : %i ... Max : %i .... NumDigits : %i",l,max,count_digits(l));
+
+
+			//	printf("\nSearched %i of a total of %i",l,max);
+//				printKey(ctx.key,32,1);
+				multiple+=131072;
+			//	char *filename = "/home/andrec/workspace_c/binPathC/testCiphers/limits";
+			//	writeToFile(date,min,max,filename);
+			}
 
 			memcpy(&temp,ctx.key,32);
 			memcpy(&temp,ctx.deckey,32);
@@ -141,7 +125,8 @@ void decrypt_file(u_char *cipherText) {
 
 
 		}
-		getDate();
+
+
 	/*u_char *plainText = (u_char *) malloc(17);
 	for (int i=0; i < 16 ; i++) {
 		plainText[i] = cipherTextBlock1[i] ^ cipherTextBlock2[i];

@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <time.h>
+#include <limits.h>
+
 
 #define u_char unsigned char
 #define numPositions 8
@@ -39,6 +42,13 @@ void trying8Elems();
 bool next_permutation(int array[], size_t length);
 void permute(char *a, int l, int r);
 
+void encrypt_file(u_char *buf,unsigned key);
+void decrypt_file(u_char *cipherText);
+long charArrayToLong(long l,int *key);
+
+
+
 u_char* readFileToArray(char *filename);
 u_char writeToFile(int min,int max,char *filename);
-u_char getDate();
+int utc_system_timestamp(char buf[]);
+void longToCharArray(long,u_char *);

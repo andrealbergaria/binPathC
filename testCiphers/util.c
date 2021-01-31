@@ -1,30 +1,79 @@
 #include "util.h"
-#include "aes256.h"
 
 
-u_char *getDate() {
-		time_t t;
-		time(&t);
+void printKey(u_char key[]  ,int sizeKey) {
+	if(sizeKey != 32)
+		return NULL;
 
-		char *beginTimeSecs = ctime(&t);
-		printf("\n[decrypt.c getDate() : %s",beginTimeSecs);
-		return beginTimeSecs;
+	char *ret = (char*) malloc(sizeKey*30);
+	 char *fmt (char*) malloc(sizeKey*30);
+
+	 for (int i=0; i < sizeKey;i++)
+		 strncpy(fmt," %x ",3);
+
+
+
+
+		for (int i = 0;i < sizeKey; i++) {
+		sizeKey[i];
+
+
+	}
+	ret++;
+
+	printf(" ] ");
+}
+
+//https://stackoverflow.com/questions/6687467/converting-char-array-to-long-in-c
+void longToCharArray(long l,u_char *key) {
+
+	key[0] = l         & 0xFF;
+	key[1] = (l >>  8) & 0xFF;
+	key[2] = (l >> 16) & 0xFF;
+	key[3] = (l >> 24) & 0xFF;
 
 }
 
+
+long charArrayToLong(long l,int *key) {
+	l = key[0] | (key[1] << 8) | (key[2] << 16) | (key[3] << 24);
+	return l;
+
+
+}
+//https://stackoverflow.com/questions/9721042/count-number-of-digits-which-method-is-most-efficient
+int count_digits(int arg) {
+    return snprintf(NULL, 0, "%d", arg) - (arg < 0);
+}
+
+
+int utc_system_timestamp(char buf[]) {
+
+	int bufsize = 31;
+
+        struct timespec now;
+        struct tm tm;
+        int retval = clock_gettime(CLOCK_REALTIME, &now);
+        gmtime_r(&now.tv_sec, &tm);
+        strftime(buf, bufsize, "%Y-%m-%dT%H:%M:%S.", &tm);
+        sprintf(buf, "%s%09luZ", buf, now.tv_nsec);
+        return retval;
+}
 // cipher text to translate
 u_char writeToFile(int min,int max,char *filename) {
-	char arr[100];
-	sprintf(arr,"Min : %i , Max : %i , ::: %s",min,max,getDate);
+	char arr[150];
+	char timeBuf[50];
+	utc_system_timestamp(timeBuf);
+	sprintf(arr,"Min : %i , Max : %i , ::: %s",min,max,timeBuf);
 
 	FILE *fPtr = fopen(filename,"a");
 
 	int arrSize = strlen(arr);
 	int retValue = fwrite(arr, 1 , arrSize, fPtr);
 	if (retValue == EOF || retValue != arrSize) {
-		perror("[util.c writeFile()] Error : %i  bytes Written so far : %i ",retValue,retValue);
-		if (fclose(fPtr) != 0);
-			perror("[util.c writeFile() fclose() ] ");
+		perror("[util.c writeFile()] Error : ");
+		if (fclose(fPtr) != 0)
+			perror("[util.c writeFile() fclose() ] Error ");
 		return -1;
 	}
 	else

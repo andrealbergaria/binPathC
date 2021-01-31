@@ -21,9 +21,9 @@ u_char writeFile(int min,int max,char *filename) {
 
 	int arrSize = strlen(arr);
 	int retValue = fwrite(arr, 1 , arrSize, fPtr);
-	if (retValue == EOF || retValue != arrSize) {
+	if (retValue != arrSize) {
 		perror("[util.c writeFile()] Error : %i  bytes Written so far : %i ",retValue,retValue);
-		if (fclose(fPtr) != 0);
+		if (fclose(fPtr) != 0)
 			perror("[util.c writeFile() fclose() ] ");
 		return -1;
 	}
@@ -41,13 +41,6 @@ u_char* readFileToArray(FILE *ptr) {
 
 	if (cipherFile == NULL) {
 		perror("\nCouldnt open cipher text file");
-		exit(-1);
-	}
-
-	retValue = fseek(cipherFile,16,SEEK_SET);
-
-	if (retValue!=0) {
-		printf("\nCoultn fseek");
 		exit(-1);
 	}
 
