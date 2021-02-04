@@ -8,18 +8,12 @@
 #include <unistd.h>
 #include <time.h>
 #include <limits.h>
+#include <stdint.h>
 
-
-#define u_char unsigned char
-#define numPositions 8
-#define numOfRows 32 // 8*32 => 256
-
-
-
-
+#define intSize 4294967296
 
 void printAllCombinations(int numOfBits, int startByte);
-void printBits(u_char number,u_char printDecimals,u_char noLeadingZeros);
+void printBits(uint8_t number,uint8_t printDecimals,uint8_t noLeadingZeros);
 void printShortBits(unsigned short number); 
 void printIntBits(unsigned int number);
 
@@ -33,7 +27,7 @@ void check32Bytes();
 void launchProg();
 
 
-void printTemplate(u_char c);
+void printTemplate(uint8_t c);
 void assignArrayToPosition(int *array,int sizeOfArr,int pos);
 void trying8Elems();
 
@@ -42,13 +36,19 @@ void trying8Elems();
 bool next_permutation(int array[], size_t length);
 void permute(char *a, int l, int r);
 
-void encrypt_file(u_char *buf,unsigned key);
-void decrypt_file(u_char *cipherText);
+void encrypt_file(uint8_t *buf,unsigned key);
+void decrypt_file(uint8_t *cipherText);
 long charArrayToLong(long l,int *key);
 
 
+int count_digits(char *arg);
 
-u_char* readFileToArray(char *filename);
-u_char writeToFile(int min,int max,char *filename);
+
+uint8_t* readFileToArray(char *filename);
+uint8_t writeToFile(int min,int max,char *filename);
 int utc_system_timestamp(char buf[]);
-void longToCharArray(long,u_char *);
+void longToCharArray(long,uint8_t *);
+void printKey(uint8_t key[]  ,int sizeKey);
+void verbosePrint(unsigned char *buf,char *valueToPrint,int sizeOfBuffer);
+
+

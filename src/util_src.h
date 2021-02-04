@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#define u_char unsigned char
+#define uint8_t unsigned char
 #define numPositions 8
 #define numOfRows 32 // 8*32 => 256
 
@@ -16,7 +16,7 @@
 
 
 void printAllCombinations(int numOfBits, int startByte);
-void printBits(u_char number,u_char printDecimals,u_char noLeadingZeros);
+void printBits(uint8_t number,uint8_t printDecimals,uint8_t noLeadingZeros);
 void printShortBits(unsigned short number); 
 void printIntBits(unsigned int number);
 
@@ -30,7 +30,7 @@ void check32Bytes();
 void launchProg();
 
 
-void printTemplate(u_char c);
+void printTemplate(uint8_t c);
 void assignArrayToPosition(int *array,int sizeOfArr,int pos);
 void trying8Elems();
 

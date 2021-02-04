@@ -1,9 +1,10 @@
+#include "util.h"
 #include "aes256.h"
 
 #define cipherTextFile "/home/andrec/workspace_c/binPathC/testCiphers/cipherTextRaw"
 
 int main() {
-	u_char bufferToEncrypt[32];
+	uint8_t bufferToEncrypt[32];
 
 
 				memset(bufferToEncrypt,0x61,16);
@@ -12,12 +13,12 @@ int main() {
 				encrypt_file(bufferToEncrypt,key);
 }
 
-void encrypt_file(u_char *stuffToBeEncrypted,unsigned int keyParam) {
+void encrypt_file(uint8_t *stuffToBeEncrypted,unsigned int keyParam) {
 
 	printf("[aes256.c] encrypting...\n");
 		aes256_context ctx;
 
-		uint8_t key[32];
+		u_int8_t key[32];
 		memset(key,0,32);
 
 		key[0]=0x61;

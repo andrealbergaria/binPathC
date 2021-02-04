@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #ifndef uint8_t
 #define uint8_t  unsigned char
-#define u_char  unsigned char
+#define uint8_t  unsigned char
 #endif
 
 #define cipherTextFile "/home/andrec/workspace_c/binPathC/cipherText"
@@ -47,6 +47,6 @@ extern "C" {
     // me
 
 
-    void encrypt_file(u_char *buf,unsigned key);
-    void decrypt_file(aes256_context aesCon,u_char *cipherText);
+    void encrypt_file(uint8_t *buf,unsigned key);
+    void decrypt_file(aes256_context aesCon,uint8_t *cipherText);
 

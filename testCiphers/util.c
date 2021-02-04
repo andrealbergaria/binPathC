@@ -1,31 +1,23 @@
 #include "util.h"
 
 
-void printKey(u_char key[]  ,int sizeKey) {
-	if(sizeKey != 32)
-		return NULL;
+void verbosePrint(unsigned char *buf,char *valueToPrint,int sizeOfBuffer) {
+	char *t = (char *) malloc(sizeOfBuffer+1);
+	strncpy(t,(char *)buf,sizeOfBuffer);
+	t[sizeOfBuffer] = '\0';
 
-	char *ret = (char*) malloc(sizeKey*30);
-	 char *fmt (char*) malloc(sizeKey*30);
+	printf("\n[util.c verbosePrint() (%s)] %s\n",valueToPrint,t);
+}
 
-	 for (int i=0; i < sizeKey;i++)
-		 strncpy(fmt," %x ",3);
-
-
-
-
-		for (int i = 0;i < sizeKey; i++) {
-		sizeKey[i];
-
-
-	}
-	ret++;
-
+void printKey(uint8_t key[]  ,int sizeKey) {
+	printf("\n[util.c printKey()] [ ");
+	for (int i = 0;i < sizeKey; i++)
+			printf("%i ",key[i]);
 	printf(" ] ");
 }
 
 //https://stackoverflow.com/questions/6687467/converting-char-array-to-long-in-c
-void longToCharArray(long l,u_char *key) {
+void longToCharArray(long l,uint8_t *key) {
 
 	key[0] = l         & 0xFF;
 	key[1] = (l >>  8) & 0xFF;
@@ -41,10 +33,38 @@ long charArrayToLong(long l,int *key) {
 
 
 }
-//https://stackoverflow.com/questions/9721042/count-number-of-digits-which-method-is-most-efficient
-int count_digits(int arg) {
-    return snprintf(NULL, 0, "%d", arg) - (arg < 0);
-}
+
+
+// size in bytes
+/* this work by , using one char (1 < 10 < 100 < 256)
+ *  (in this case if number == 50
+ *  	10<  50 < 100 , 2digits
+ * and then going to the second byte and so forth like 1000 (4 digits) 10000(5digits)
+ */
+
+
+int count_digits(char *arg) {
+
+	int countTemp = 0;
+	int min=1;
+		for (int it=0;  it < strlen(arg); it++) {
+			printf("it %i\n",it);
+			countTemp++;
+			/*
+			for (int i=1; i < 256; i = i * 10 ) {
+
+				if (arg[it] > min && arg[it] <= i )  {
+					countTemp++;
+					min*=10;
+				}
+
+			}*/
+		}
+		printf("\nCount %i",countTemp);
+		return countTemp;
+
+	}
+
 
 
 int utc_system_timestamp(char buf[]) {
@@ -60,7 +80,7 @@ int utc_system_timestamp(char buf[]) {
         return retval;
 }
 // cipher text to translate
-u_char writeToFile(int min,int max,char *filename) {
+uint8_t writeToFile(int min,int max,char *filename) {
 	char arr[150];
 	char timeBuf[50];
 	utc_system_timestamp(timeBuf);
@@ -82,10 +102,10 @@ u_char writeToFile(int min,int max,char *filename) {
 		return 0;
 
 }
-u_char* readFileToArray(char *filename) {
+uint8_t* readFileToArray(char *filename) {
 	FILE *cipherFile;
 	int retValue;
-	u_char *cipherText = (u_char *) malloc(32);
+	uint8_t *cipherText = (uint8_t *) malloc(32);
 	cipherFile = fopen( filename, "rb");
 
 	if (cipherFile == NULL) {
@@ -137,7 +157,7 @@ void printPositions() {
     int temp = pos;
     for (int i = 1 ; i < 9 ; i++) {
     pos = temp;
-    printf("\nu_char pos_%i[] = { ",pos);
+    printf("\nuint8_t pos_%i[] = { ",pos);
     for (int i=0; i < 31; i++) {
         pos+=8;
         printf(" %i,",pos);
@@ -151,7 +171,7 @@ void printPositions() {
 // NEed 8 ints....32bytes 8*4 =32
 
 
-void printTemplate(u_char toTest) {
+void printTemplate(uint8_t toTest) {
             unsigned char a[] = {'1','2','3','4','5','6','7','8'};
             unsigned char b[] = {'1','2','3','4','5','6','7','8'};
             unsigned char c[] = {'1','2','3','4','5','6','7','8'};
@@ -326,10 +346,10 @@ void printUsingFunction() {
 
 
 
-void printBits(unsigned char number,u_char printDecimals,u_char noLeadingZeros) {
+void printBits(unsigned char number,uint8_t printDecimals,uint8_t noLeadingZeros) {
    unsigned char mask = 0x80;
    int it;
-   u_char zero='0',one='1';
+   uint8_t zero='0',one='1';
    for (it=0 ;it < 8; it++) {
 
        if (number & mask)

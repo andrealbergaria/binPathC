@@ -1,3 +1,6 @@
+
+
+
 /*  
 *   Byte-oriented AES-256 implementation.
 
@@ -18,37 +21,27 @@
 *   ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 *   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#ifndef uint8_t
-#define uint8_t  unsigned char
-#define u_char  unsigned char
-#endif
+#include "util.h"
 
-
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
 #define intSize 4294967296
 
     typedef struct {
-        uint8_t key[32]; 
-        uint8_t enckey[32]; 
+        uint8_t key[32];
+        uint8_t enckey[32];
         uint8_t deckey[32];
     } aes256_context; 
 
 
-    void aes256_init(aes256_context *, uint8_t * /* key */);
+    void aes256_init(aes256_context *, u_int8_t * /* key */);
     void aes256_done(aes256_context *);
     void aes_expandEncKey(uint8_t *k, uint8_t *rc);
 
 
 
-    void aes256_encrypt_ecb(aes256_context *, uint8_t * /* plaintext */);
+    void aes256_encrypt_ecb(aes256_context *, uint8_t */* plaintext */);
     void aes256_decrypt_ecb(aes256_context *, uint8_t * /* cipertext */);
-    // me
+
 
 
 

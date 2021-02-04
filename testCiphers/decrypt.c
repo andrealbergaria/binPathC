@@ -1,18 +1,17 @@
-#include "aes256.h"
 #include "util.h"
-
+#include "aes256.h"
 #define cipherTextFile "/home/andrec/workspace_c/binPathC/testCiphers/cipherTextRaw"
 
 
 int main() {
 
 
-	u_char *cipherText = (u_char *) malloc(32);
+	uint8_t *cipherText = (uint8_t *) malloc(32);
 
 
 	char *filename="/home/andrec/workspace_c/binPathC/testCiphers/limits";
 	cipherText = readFileToArray(filename);
-	//u_char key[] = {0x61,0x61,0x61,0x61};
+	//uint8_t key[] = {0x61,0x61,0x61,0x61};
 
 
 /*		memset(&(aesCon.key),0,32);
@@ -34,14 +33,14 @@ int main() {
 
 //https://stackoverflow.com/questions/8304259/formatting-struct-timespec
 
-void decrypt_file(u_char *cipherText) {
+void decrypt_file(uint8_t *cipherText) {
 
 
 	aes256_context ctx;
 
 
-	//u_char cipherTextBlock1[16];
-//	u_char cipherTextBlock2[16];
+	//uint8_t cipherTextBlock1[16];
+//	uint8_t cipherTextBlock2[16];
 
 
 //	memcpy(cipherTextBlock1,cipherText,16);
@@ -53,19 +52,19 @@ void decrypt_file(u_char *cipherText) {
 	memset(&aesCon.deckey,0,sizeof(aesCon.deckey));
 	*/
 	memset(ctx.key,0,32);
-	ctx.key[0] = 0;
-	ctx.key[1] = 1;
-	ctx.key[2] = 2;
-	ctx.key[3] = 3;
+	ctx.key[0] = 0x61;
+	ctx.key[1] = 0x61;
+	ctx.key[2] = 0x61;
 
-	printKey(ctx.key,32,1);
+	printKey(ctx.key,32);
 	memcpy(ctx.deckey,ctx.key,32);
 	memcpy(ctx.enckey,ctx.key,32);
 
 // from aes256_lib, aes256_init_aux
 	uint8_t rcon = 1;
 
-    for (int i = 8; --i;) aes_expandEncKey((uint8_t *)&(ctx.deckey), &rcon);
+    for (int i = 8; --i;) aes_expandEncKey(ctx.deckey, &rcon);
+
 
 
 
@@ -74,8 +73,8 @@ void decrypt_file(u_char *cipherText) {
 
     	//int numCombs = intSize/4;
 		//int numCombs = 65536;
-    int multiple=131072;
-    int interval = 4096;
+    int multiple=65536;
+
     // Check for 4 bytes
  //   int maxAttempt= 256*256*256*32;
     // brutesforce 4 bytes (256 can't be because compiler says overflow
@@ -94,24 +93,25 @@ void decrypt_file(u_char *cipherText) {
     utc_system_timestamp(date);
     printf("\n%s",date);
 
-    unsigned int l=min;
 
-		for ( unsigned long l=min; l < max ;l++) {
+		for ( int l=min; l < max ;l++) {
 
 
 
 			longToCharArray(l,(unsigned char*) ctx.key);
 			// Multiple = k * interval
-			if (multiple == (4096 * l)) {
+			// when it reaches 65526 and other prints
+			if (multiple == (16384 * l)) {
 				utc_system_timestamp(date);
-				printKey(ctx.key,32,1);
-
-				printf("Elapsed : %s \nMin : %i ... Max : %i .... NumDigits : %i",l,max,count_digits(l));
+				printKey((uint8_t *)&ctx.key,32);
+				char ret[max];
+				sprintf(ret,"%c",l);
+				printf("Elapsed : %s \nMin : %i ... Max : %i .... NumDigits : %i",date,l,max,count_digits(ret));
 
 
 			//	printf("\nSearched %i of a total of %i",l,max);
 //				printKey(ctx.key,32,1);
-				multiple+=131072;
+				multiple+=65536;
 			//	char *filename = "/home/andrec/workspace_c/binPathC/testCiphers/limits";
 			//	writeToFile(date,min,max,filename);
 			}
@@ -127,7 +127,7 @@ void decrypt_file(u_char *cipherText) {
 		}
 
 
-	/*u_char *plainText = (u_char *) malloc(17);
+	/*uint8_t *plainText = (uint8_t *) malloc(17);
 	for (int i=0; i < 16 ; i++) {
 		plainText[i] = cipherTextBlock1[i] ^ cipherTextBlock2[i];
 	}

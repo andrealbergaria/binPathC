@@ -13,7 +13,7 @@ char *getDate() {
 }
 
 // cipher text to translate
-u_char writeFile(int min,int max,char *filename) {
+uint8_t writeFile(int min,int max,char *filename) {
 	char arr[100];
 	sprintf(arr,"Min : %i , Max : %i , ::: %s",min,max,getDate);
 
@@ -33,10 +33,10 @@ u_char writeFile(int min,int max,char *filename) {
 		return 0;
 
 }
-u_char* readFileToArray(FILE *ptr) {
+uint8_t* readFileToArray(FILE *ptr) {
 	FILE *cipherFile;
 	int retValue;
-	u_char *cipherText = (u_char *) malloc(16);
+	uint8_t *cipherText = (uint8_t *) malloc(16);
 	cipherFile = fopen( "files/cipherText", "rb");
 
 	if (cipherFile == NULL) {
@@ -88,7 +88,7 @@ void printPositions() {
     int temp = pos;
     for (int i = 1 ; i < 9 ; i++) {
     pos = temp;
-    printf("\nu_char pos_%i[] = { ",pos);
+    printf("\nuint8_t pos_%i[] = { ",pos);
     for (int i=0; i < 31; i++) {
         pos+=8;
         printf(" %i,",pos);
@@ -102,7 +102,7 @@ void printPositions() {
 // NEed 8 ints....32bytes 8*4 =32
 
 
-void printTemplate(u_char toTest) {
+void printTemplate(uint8_t toTest) {
             unsigned char a[] = {'1','2','3','4','5','6','7','8'};
             unsigned char b[] = {'1','2','3','4','5','6','7','8'};
             unsigned char c[] = {'1','2','3','4','5','6','7','8'};
@@ -277,10 +277,10 @@ void printUsingFunction() {
 
 
 
-void printBits(unsigned char number,u_char printDecimals,u_char noLeadingZeros) {
+void printBits(unsigned char number,uint8_t printDecimals,uint8_t noLeadingZeros) {
    unsigned char mask = 0x80;
    int it;
-   u_char zero='0',one='1';
+   uint8_t zero='0',one='1';
    for (it=0 ;it < 8; it++) {
 
        if (number & mask)

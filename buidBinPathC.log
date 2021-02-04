@@ -1,6 +1,29 @@
-03:59:27 **** Incremental Build of configuration Release for project binPathC ****
+22:32:32 **** Incremental Build of configuration Makefiles for project binPathC ****
 make all 
-make: *** No rule to make target 'all'.  Stop.
+Building file: ../testc/test.c
+Invoking: GCC C Compiler
+gcc -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"testc/test.d" -MT"testc/test.d" -o "testc/test.o" "../testc/test.c"
+../testc/test.c: In function ‘main’:
+../testc/test.c:35:19: error: expected ‘,’ or ‘;’ before string constant
+testc/subdir.mk:18: recipe for target 'testc/test.o' failed
+    char *dst = str"bb";
+                   ^~~~
+../testc/test.c:37:4: warning: statement with no effect [-Wunused-value]
+    "aa""bb"
+    ^~~~
+../testc/test.c:38:4: error: expected ‘;’ before ‘printf’
+    printf("\nabc %s",dst);
+    ^~~~~~
+../testc/test.c:42:22: error: invalid operands to binary * (have ‘int’ and ‘char *’)
+     printf("%s",*ptr1*ptr2);
+                 ~~~~~^
+../testc/test.c:35:10: warning: unused variable ‘dst’ [-Wunused-variable]
+    char *dst = str"bb";
+          ^~~
+../testc/test.c:26:8: warning: unused variable ‘buf’ [-Wunused-variable]
+  char *buf="ASF";
+        ^~~
+make: *** [testc/test.o] Error 1
 
-03:59:32 Build Finished (took 4s.425ms)
+22:32:33 Build Finished (took 1s.135ms)
 
