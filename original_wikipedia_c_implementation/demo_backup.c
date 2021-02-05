@@ -27,7 +27,7 @@
 #define limitsFile "minmax.log"
 
 
-extern tryCombsASM();
+extern tryCombinations();
 //#define DUMP(s,buf, sz)  {printf(s);                   \
  //                             for (int i = 0; i < (sz);i++)    \
   //                                printf("%02x ", buf[i]); \
@@ -68,7 +68,7 @@ void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii) {
 }
 
 // cipher text to translate
-uint8_t writeToFile(int min,int max) {
+/*uint8_t writeToFile(int min,int max) {
 	char arr[300];
 	char timeBuf[50];
 	utc_system_timestamp(timeBuf,50);
@@ -95,7 +95,7 @@ uint8_t writeToFile(int min,int max) {
 		return 0;
 
 }
-
+*/
 u_int32_t readFileToArray(char *filename,uint8_t *buf) {
 	FILE *cipherFile;
 	int retValue;
