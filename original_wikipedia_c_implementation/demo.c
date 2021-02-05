@@ -21,9 +21,13 @@
 #include <string.h>
 #include "aes256.h"
 #include <time.h>
-
+#include <signal.h>
+#include <unistd.h>
 
 #define limitsFile "minmax.log"
+
+
+extern tryCombinations();
 //#define DUMP(s,buf, sz)  {printf(s);                   \
  //                             for (int i = 0; i < (sz);i++)    \
   //                                printf("%02x ", buf[i]); \
@@ -37,7 +41,8 @@ long charArrayToLong(long l,int *key);
 void tryCombinations(long min,long max,long interval);
 uint8_t tryKeyRange(long min,long max);
 
-
+static int min=0;
+static int max=65536;
 
 int bytesSize(long val) {
                     int size = 0;
@@ -155,17 +160,15 @@ void tryCombinations(long min,long max,long interval) {
 	}
 
 	printf("\nBegin date %s",date);
-	int aux = 0,aux2=0;
+
+
+	int aux = 0;
 	for (int i=0; i < 131072; i++) {
 		tryKeyRange(min,max);
 
 		if (i == aux) {
-			aux+=8192;
-			printf("\nMin : %i (%i bytes) , Max : %i (%i bytes) ",min,bytesSize(min),max,bytesSize(max));
-		}
-		if (i == aux2) {
 			writeToFile(min,max);
-			aux2+=32768;
+			aux+=32768;
 		}
 		 min = max;
 		 max += interval;
@@ -179,18 +182,33 @@ uint8_t tryKeyRange(long min,long max) {
 
 		for (long i=min; i < max; i++) {
 			longToCharArray(i,key,32);
-		    DUMP("key: ", key, 32,0);
+		    //DUMP("key: ", key, 32,0);
 		    aes256_init(&ctx, key);
 		    aes256_decrypt_ecb(&ctx,buf);
-		    DUMP("dec: ", buf, 32,1);
+		   // DUMP("dec: ", buf, 32,1);
 		    aes256_done(&ctx);
 		}
 		free(key);
 		free(buf);
 
 }
+void sig_handler(int signum){
+	if (signum == SIGTSTP) {
+
+		char buf[100];
+		memset(buf,0,100);
+		utc_system_timestamp(buf,100);
+		printf("\n DATE : %s",buf);
+		printf("\nMin : %i (%i bytes) , Max : %i (%i bytes) ",min,bytesSize(min),max,bytesSize(max));
+		writeToFile(min,max);
+	}
+
+}
+
+
 int main (int argc, char *argv[])
 {
+	  signal(SIGTSTP ,sig_handler);
     aes256_context ctx; 
     uint8_t key[32];
     uint8_t decrypt_buf[32];

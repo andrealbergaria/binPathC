@@ -8,11 +8,16 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include wolfssl/subdir.mk
 -include testc/subdir.mk
 -include testCiphers/subdir.mk
+-include original_wikipedia_c_implementation/subdir.mk
 -include ideas/scratchpad/subdir.mk
 -include ideas/add_equals_sub/subdir.mk
 -include ideas/subdir.mk
+-include eclipse_asm/subdir.mk
+-include aes_brian/python_binding/subdir.mk
+-include aes_brian/subdir.mk
 -include subdir.mk
 -include objects.mk
 

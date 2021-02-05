@@ -15,6 +15,7 @@ O_SRCS += \
 ../testCiphers/aes256_lib.o \
 ../testCiphers/decrypt.o \
 ../testCiphers/encrypt.o \
+../testCiphers/testCiphers.o \
 ../testCiphers/util.o 
 
 OBJS += \
