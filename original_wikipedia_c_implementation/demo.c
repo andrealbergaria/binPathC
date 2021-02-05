@@ -151,7 +151,8 @@ int utc_system_timestamp(char *buf,int sizeOfBuf) {
         return retval;
 }
 
-void tryCombinations(long min,long max,long interval) {
+tryCombsASM();
+/*void tryCombinations(long min,long max,long interval) {
 	char *date = (char *) malloc(50);
 
 	utc_system_timestamp(date,50);
@@ -175,8 +176,8 @@ void tryCombinations(long min,long max,long interval) {
 		 max += interval;
 	}
 	free(date);
-}
-uint8_t tryKeyRange(long min,long max) {
+}*/
+/*uint8_t tryKeyRange(long min,long max) {
 		uint8_t *key = (uint8_t *) malloc(32);
 		uint8_t *buf = (uint8_t *) malloc(32);
 		aes256_context ctx;
@@ -184,7 +185,8 @@ uint8_t tryKeyRange(long min,long max) {
 		for (long i=min; i < max; i++) {
 			longToCharArray(i,key,32);
 		    //DUMP("key: ", key, 32,0);
-		    aes256_init(&ctx, key);
+		     *
+		    aes256_init(&ctx, key);/*
 		    aes256_decrypt_ecb(&ctx,buf);
 		   // DUMP("dec: ", buf, 32,1);
 		    aes256_done(&ctx);
@@ -192,7 +194,7 @@ uint8_t tryKeyRange(long min,long max) {
 		free(key);
 		free(buf);
 
-}
+}*/
 void sig_handler(int signum){
 	if (signum == SIGTSTP) {
 
@@ -235,9 +237,9 @@ int main (int argc, char *argv[])
   //  DUMP("enc: ", i, buf, sizeof(buf));
   //  printf("tst: 8e a2 b7 ca 51 67 45 bf ea fc 49 90 4b 49 60 89\n");
 
-    tryCombinations(0,65536,65536);
+    tryCombsASM();
 
-    aes256_done(&ctx);
+    //aes256_done(&ctx);
 
     return 0;
 } /* main */

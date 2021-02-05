@@ -291,6 +291,8 @@ void aes_mixColumns_inv(uint8_t *buf)
 /* -------------------------------------------------------------------------- */
 static void aes_expandEncKey(uint8_t *k, uint8_t *rc)
 {
+
+
     register uint8_t i;
 
     k[0] ^= rj_sbox(k[29]) ^ (*rc);

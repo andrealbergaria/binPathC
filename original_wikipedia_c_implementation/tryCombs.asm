@@ -2,14 +2,14 @@
 
 ;nasm tryCombinations.asm -f elf -o tryCombinations.o
 ; gcc demo.o tryCombs.o -o d
-	extern aes_expandEncKey,aes256_decrypt_ecb
+	EXTERN aes_expandEncKey,aes256_decrypt_ecb
+
 
 	SECTION .DATA
 		rcon: db 1
 		auxVar: dd 0
 		min: dd 0
 		max: dd 65536
-		interval: dd 65536
 
 		key: times 32 db 0
 		enckey: times 32 db 0
@@ -29,52 +29,49 @@ tryCombsASM:
 	loop:
 		cmp ecx,0
 		je tryCombinationsEnd
-		mov eax,min
-		mov ebx,max
-		push eax
-		push ebx
+		mov eax,[min]
+		mov ebx,[max]
 		call tryKeyRange
-
-		mov eax,ebx ; 		mov min,max
-		add ebx,interval ; max+interval
+		mov eax,ebx		 ; 		mov min,max
+		add ebx,65536 ; adds interval
 		sub ecx,1 ; counter
 		jmp loop
 
-decrementECX:
-	sub ecx,1
-	jmp loop
-
-tryKeyRange:
-		pop eax ; min
-		pop ebx ; max
-
-keyRangeLoop:
-				cmp ebx,max
-				je decrementECX
+tryKeyRange:			;for (long i=min; i < max; i++)
+				cmp eax,ebx ; eax -> min, ebx -> max
+				je loop ; finished tryKeyRange
 
 
-	AESInit:
-		mov [key],ebx
-		mov [enckey],ebx
-		mov [deckey],ebx
+	AESInit:   ;aes256_init(&ctx, key);
+	;
+	;
+	; uint8_t rcon = 1;
+    ;register uint8_t i;
+
+    ;for (i = 0; i < sizeof(ctx->key); i++) ctx->enckey[i] = ctx->deckey[i] = k[i];
+
+	;
+
+		mov [key],eax
+		mov [enckey],eax
+		mov [deckey],eax
 		mov edx,8
-	Iterator:
+	Iterator:   ;for (i = 8; --i;) aes_expandEncKey(ctx->deckey, &rcon);
 		cmp edx,0
-		je after_AESInit
-		mov esi,deckey
-		mov edi,rcon
-		push esi
-		push edi
+		je decrypt
+		push deckey
+		push rcon
 		call aes_expandEncKey
 		sub edx,1
 		jmp Iterator
 
-	after_AESInit:
-				push key
+	decrypt:
+				push eax
 				push buf
 				call aes256_decrypt_ecb
-				add ebx,1
-        		jmp keyRangeLoop
+				add eax,1
+        		jmp tryKeyRange
+
 
 	tryCombinationsEnd:
 		ret
