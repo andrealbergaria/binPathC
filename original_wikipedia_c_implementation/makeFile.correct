@@ -1,0 +1,16 @@
+all: key
+
+readFile.o: 
+	gcc -c -g -ggdb readFile.c -o readFile.o
+
+aes256.o:
+	gcc -g -ggdb aes256.c -c -o aes256.o
+
+tryRightKey.o: aes256.o readFile.o
+	nasm tryRightKey.asm -g -F dwarf -f elf32 -o tryRightKey.o
+
+key: readFile.o aes256.o tryRightKey.o 
+	gcc -g -ggdb Wl,-estart -nostartfiles aes256.o readFile.o tryRightKey.o -o key
+
+clean:
+	rm *.o

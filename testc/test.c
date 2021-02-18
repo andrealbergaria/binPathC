@@ -20,6 +20,34 @@ char arr[] = "ABC";
 
 int main() {
 
+		struct testS {
+			int var1;
+			short var2;
+		} ;
+
+		struct testS test =  {123,321};
+		struct testS *ptrT = &test;
+
+		int *deref = ptrT;
+
+		printf("\nVar1 contents : %i",*deref);
+		//https://www.geeksforgeeks.org/structures-c/
+		//The reason for above error is simple, when a datatype is declared, no memory is allocated for it. Memory is allocated only when variables are created.
+		// whaqt about declaring test?
+
+		printf("\nsame? %i",(*ptrT).var1);
+		printf("\n same 2? %i",ptrT->var1);
+
+		printf("\ntest addr of var 1 %p\n",&(ptrT->var1));
+		printf("\naddress of ptrT %p",ptrT);
+		if (ptrT==(int *) &(test.var1)) {
+			printf("PTrT = VAR1\n");
+		}
+
+		for (int i=0; i < 3; i++) {
+			printf("\n*ptr[%i] %i",i,*(ptrT+i));
+		}
+
 	arr[0] = 'B';
 	//char *tStr = { 'a','b','c',0};
 	//printf("%s ",tStr);
@@ -31,7 +59,7 @@ int main() {
 
 
 	 //strcpy()
-		 char *str ="aa"; //Take address from "aa", which is str;
+	/*	 char *str ="aa"; //Take address from "aa", which is str;
 		 char *dst = str"bb";
 		 // todo  saber como funciona o "aa""bb"
 		 "aa""bb"

@@ -1,0 +1,3 @@
+#!/bin/bash
+seq 1 8 | tr '\n' 'A' > plainTextCBC
+seq 1 8 | tr '\n' 'A' >> plainTextCBC

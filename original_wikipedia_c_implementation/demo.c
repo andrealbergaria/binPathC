@@ -23,11 +23,19 @@
 #include <time.h>
 #include <signal.h>
 #include <unistd.h>
+#include <fcntl.h>
 
-#define limitsFile "minmax.log"
+#define limitsFile "keysTried"
 
 
-extern tryCombsASM();
+extern int nextByte;
+extern int max;
+extern int min;
+extern int tryCombsASM(char *);
+extern int tryRightKey(char *);
+extern void addOne(aes256_context *ctx,int idx);
+
+
 //#define DUMP(s,buf, sz)  {printf(s);                   \
  //                             for (int i = 0; i < (sz);i++)    \
   //                                printf("%02x ", buf[i]); \
@@ -35,14 +43,16 @@ extern tryCombsASM();
 int utc_system_timestamp(char *buf,int sizeOfBuf) ;
 void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii);
 uint8_t writeToFile(int,int);
-u_int32_t readFileToArray(char *filename,uint8_t *buf);
+u_int32_t readFile(char *filename,uint8_t *buf);
 void longToCharArray(long l,uint8_t *key,int sizeOfKey);
 long charArrayToLong(long l,int *key);
 void tryCombinations(long min,long max,long interval);
 uint8_t tryKeyRange(long min,long max);
+int bytesSize(long);
+void sig_handler(int signum);
+int printBuf(unsigned char *buf);
 
-static int min=0;
-static int max=65536;
+
 
 int bytesSize(long val) {
                     int size = 0;
@@ -56,7 +66,7 @@ int bytesSize(long val) {
 
 
 void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii) {
-		printf(s);
+		printf("%s",s);
 		for (int i = 0; i < (bufSize);i++) {
 			if (isAscii==1)
 				printf("%c ",buf[i]);
@@ -69,58 +79,40 @@ void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii) {
 
 // cipher text to translate
 uint8_t writeToFile(int min,int max) {
-	char arr[300];
 	char timeBuf[50];
 	utc_system_timestamp(timeBuf,50);
-	sprintf(arr,"Min : %i (%i bytes) , Max : %i (%i bytes), ::: %s",min,bytesSize(min),max,bytesSize(max),timeBuf);
 
-	FILE *fPtr = fopen(limitsFile,"a");
-	if (fPtr == NULL) {
-		perror("[demo.c , fopen()] file pointer returned null");
+	char fmt[] = "Min : %i (%i bytes) , Max : %i (%i bytes), ::: %s";
+
+	int sizeOfFmt = sizeof(fmt);
+
+	char *buf = (char *) malloc (sizeof(fmt));
+
+	printf(fmt,min,bytesSize(min),max,bytesSize(max),timeBuf);
+
+	FILE *stream = fopen(limitsFile,"a+");
+
+	if (stream == NULL) {
+		perror("\ndemo.c writeToFile fopen() error");
 		exit(-1);
 	}
-	int arrSize = strlen(arr);
-	int retValue = fwrite(arr, 1 , arrSize, fPtr);
-	if (retValue == EOF || retValue != arrSize) {
-		perror("[util.c writeFile()] Error : ");
-		if (fclose(fPtr) != 0)
-			perror("[util.c writeFile() fclose() ] Error ");
-		return -1;
+	sprintf(buf,fmt,min,bytesSize(min),max,bytesSize(max),timeBuf);
+
+	int numWrite = fwrite(buf,sizeOfFmt,stream);
+
+	if (numWrite == 0) {
+		perror("demo.c writeToFile fwrite()");
+		exit(-1);
 	}
-	else {
-		printf(arr,"Min : %i (%i bytes) , Max : %i (%i bytes), ::: %s",min,bytesSize(min),max,bytesSize(max),timeBuf);
-		printf("[util.c , writeFile() ] Wrote file %s",limitsFile);
-	}
-	fclose(fPtr);
-		return 0;
+	printf("[demo.c , writeToFile() ] %s ",buf);
+	printf("[demo.c , writeToFile() ] Wrote file %s (%i bytes) ... ",limitsFile,numWrite);
+
+
+	return 0;
 
 }
 
-u_int32_t readFileToArray(char *filename,uint8_t *buf) {
-	FILE *cipherFile;
-	int retValue;
-	int bytesRead = -1;
-	uint8_t *cipherText = (uint8_t *) malloc(32);
-	cipherFile = fopen( filename, "rb");
 
-	if (cipherFile == NULL) {
-		perror("\nCouldnt open cipher text file");
-		exit(-1);
-	}
-
-	bytesRead = fread(buf,1,32,cipherFile);
-
-	retValue = fclose(cipherFile);
-
-	if (retValue != 0) {
-		printf("\nDidnt close file properly");
-		exit(-1);
-	}
-
-	return bytesRead;
-
-
-}
 
 //https://stackoverflow.com/questions/6687467/converting-char-array-to-long-in-c
 void longToCharArray(long l,uint8_t *key,int sizeOfKey) {
@@ -151,8 +143,8 @@ int utc_system_timestamp(char *buf,int sizeOfBuf) {
         return retval;
 }
 
-tryCombsASM();
-/*void tryCombinations(long min,long max,long interval) {
+
+void tryCombinations(long min,long max,long interval) {
 	char *date = (char *) malloc(50);
 
 	utc_system_timestamp(date,50);
@@ -168,78 +160,125 @@ tryCombsASM();
 	for (int i=0; i < 131072; i++) {
 		tryKeyRange(min,max);
 
-	//	if (i == aux) {
-	//		writeToFile(min,max);
-	//		aux+=32768;
-	//	}
+
 		 min = max;
 		 max += interval;
+		 //	if (i == aux) {
+		 	//		writeToFile(min,max);
+		 	//		aux+=32768;
+		 	//	}
 	}
 	free(date);
-}*/
-/*uint8_t tryKeyRange(long min,long max) {
+}
+
+uint8_t tryKeyRange(long min,long max) {
 		uint8_t *key = (uint8_t *) malloc(32);
-		uint8_t *buf = (uint8_t *) malloc(32);
+		uint8_t *buf_t = (uint8_t *) malloc(32);
 		aes256_context ctx;
 
 		for (long i=min; i < max; i++) {
 			longToCharArray(i,key,32);
 		    //DUMP("key: ", key, 32,0);
-		     *
-		    aes256_init(&ctx, key);/*
-		    aes256_decrypt_ecb(&ctx,buf);
+
+		    aes256_init(&ctx, key);
+		    aes256_decrypt_ecb(&ctx,buf_t);
 		   // DUMP("dec: ", buf, 32,1);
 		    aes256_done(&ctx);
 		}
 		free(key);
-		free(buf);
+		free(buf_t);
 
-}*/
-void sig_handler(int signum){
-	if (signum == SIGTSTP) {
+}
+void sig_handler(int signum) {
 
-		char buf[100];
-		memset(buf,0,100);
-		utc_system_timestamp(buf,100);
-		printf("\n DATE : %s",buf);
-		printf("\nMin : %i (%i bytes) , Max : %i (%i bytes) ",min,bytesSize(min),max,bytesSize(max));
+
+	if (signum == SIGTSTP || signum == SIGTERM  || signum == SIGINT) {
+		printf("\nWriting file (signal %i caught)\n",signum);
 		writeToFile(min,max);
 	}
 
+
 }
 
+int printBuf(unsigned char *buf) {
+	printf("\n");
+	for (int i=0; i < 16;i++) {
+    		printf(" %x ",*(buf+i));
+
+    	}
+    	printf("\n");
+
+
+}
 
 int main (int argc, char *argv[])
 {
-	  signal(SIGTSTP ,sig_handler);
-    aes256_context ctx; 
-    uint8_t key[32];
-    uint8_t decrypt_buf[32];
-    int bytesRead = readFileToArray("./files/cipherTextECB",decrypt_buf);
-    //uint8_t *encrypt_buf = writeToFile(("./files/cipherTextECB");
-    /* put a test vector */
-    //for (i = 0; i < sizeof(buf);i++) buf[i] = i * 16 + i;
-    //for (i = 0; i < sizeof(key);i++) key[i] = i;
-    if (bytesRead != 32){
-    	printf("\nDidnt read the cipherFile all the way up");
+
+		unsigned char *buf = (char*) malloc(16);
+		__sighandler_t sigError;
+	    sigError = signal(SIGTERM,sig_handler);    /* register the handler */
+	    if (sigError ==SIG_ERR) {
+	    	perror("\nSIGTRERM NAO HANDLED");
+	    	exit(-1);
+	    }
+	    sigError= signal(SIGTSTP,sig_handler);
+	    if (sigError ==SIG_ERR) {
+	    	    	perror("\nSIGTSTP NAO HANDLED");
+	    	    	exit(-1);
+	    	    }
+
+	    sigError= signal(SIGINT,sig_handler);
+	    if (sigError ==SIG_ERR) {
+	    	perror("\nSIGINT NAO HANDLED");
+	    	exit(-1);
+	    }
+
+
+
+    int bytesRead = readFile("files/cipherTextECB",buf);
+
+    if (bytesRead != 16){
+    	printf("\nDidnt read the cipherFile all the way up\n");
+    	exit(-1);
     }
-    memset(key,0x0,sizeof(key));
-    key[0] = 0x61;
-    key[1] = 0x61;
-    key[2] = 0x61;
+    else {
+    	printf("\nread %i bytes\n",bytesRead);
 
-    DUMP("txt: ", decrypt_buf, sizeof(decrypt_buf),0);
+    }
+
+    tryCombsASM(buf);
+    //printBuf(buf);
+
+   // tryRightKey(buf);
+
+   /* printf("\nBuf size %i\n",sizeof(buf));
+    DUMP("buf: ", buf, sizeof(buf),0);
+    char *key = malloc(32);
+    memset(key,0,32);
+    memset(key,0x61,4);
+*/
+
+
+	free(buf);
+/*
+
+    aes256_encrypt_ecb(&ctx, decrypt_buf);
+
+    DUMP("enc: ", i, buf, sizeof(buf));
+    printf("tst: 8e a2 b7 ca 51 67 45 bf ea fc 49 90 4b 49 60 89\n");
+
+    aes256_init(&ctx, key);
+     aes256_decrypt_ecb(&ctx, buf);
+
+    DUMP("decrypt_buf : ", buf, sizeof(buf),1);
     printf("---\n");
+    free(key);
+    aes256_done(&ctx);
 
-//    aes256_init(&ctx, key);
- //   aes256_encrypt_ecb(&ctx, decrypt_buf);
 
-  //  DUMP("enc: ", i, buf, sizeof(buf));
-  //  printf("tst: 8e a2 b7 ca 51 67 45 bf ea fc 49 90 4b 49 60 89\n");
+	*/
 
-    tryCombsASM();
-
-    //aes256_done(&ctx);
+         //aes256_done(&ctx);
 
     return 0;
 } /* main */

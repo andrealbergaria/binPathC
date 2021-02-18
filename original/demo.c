@@ -35,6 +35,9 @@ int main (int argc, char *argv[])
     for (i = 0; i < sizeof(buf);i++) buf[i] = i * 16 + i;
     for (i = 0; i < sizeof(key);i++) key[i] = i;
 
+    //memset(key,0,32);
+    //memset(key,0x61,4);
+
     DUMP("txt: ", i, buf, sizeof(buf));
     DUMP("key: ", i, key, sizeof(key));
     printf("---\n");

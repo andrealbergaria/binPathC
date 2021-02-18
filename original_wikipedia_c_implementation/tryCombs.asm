@@ -1,80 +1,167 @@
 [BITS 32]
 
-;nasm tryCombinations.asm -f elf -o tryCombinations.o
-; gcc demo.o tryCombs.o -o d
-	EXTERN aes_expandEncKey,aes256_decrypt_ecb
+	extern aes_expandEncKey
+	extern aes256_decrypt_ecb
+	extern printf
+	extern writeToFile
+
+	extern idx;  //when idx==256, means next byte
+		global tryCombsASM
+		global min
+		global max
 
 
-	SECTION .DATA
-		rcon: db 1
-		auxVar: dd 0
-		min: dd 0
-		max: dd 65536
-
-		key: times 32 db 0
-		enckey: times 32 db 0
-		deckey:  times 32 db 0
-		buf: times 48 dd 0x62
+section .bss
 
 
-		SECTION .TEXT
-			GLOBAL tryCombsASM
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+struc   contextType
+	key:	resd 8
+	enckey:	resd 8
+	deckey:	resd 8
+endstruc
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	buf: resd 4
+
+
+section .data
+
+fmt:
+	str: db '\n Buf %s\n'
+
+
+nextByte: dd 0 ;used for summing the next bytes of keys
+
+idx: dd 0
+
+structTestKey:
+    istruc contextType
+    	at key,    dd 0,0,0,0,0,0,0,0
+        at enckey, dd 0,0,0,0,0,0,0,0
+        at deckey, dd 0,0,0,0,0,0,0,0
+    iend
+
+			kInteger: dd 0  ; index of formula of multiple
+			min: dd 0
+			max: dd 0x0000ffff
+			rcon: dd 1
+
+
+
+;MOV  destination, source
+
+		section .text
+
+;391e f6a8 c614 7d64 f196 f804 ad6b e7a1
+
 
 tryCombsASM:
 		push ebp
-		mov  esp, ebp
+		mov  ebp, esp
 
-		mov ecx,131072
+		mov eax, [ebp + 8] ;buf
+		mov [buf] ,eax
+		;mov ebx ,eax  ;copy orginal buf to ebx
 
-	loop:
-		cmp ecx,0
-		je tryCombinationsEnd
-		mov eax,[min]
-		mov ebx,[max]
-		call tryKeyRange
-		mov eax,ebx		 ; 		mov min,max
-		add ebx,65536 ; adds interval
-		sub ecx,1 ; counter
-		jmp loop
+	;*buf = &buf
 
-tryKeyRange:			;for (long i=min; i < max; i++)
-				cmp eax,ebx ; eax -> min, ebx -> max
-				je loop ; finished tryKeyRange
+	tryCombinations: ; min, max {
+
+		cmp [max],0x7528670 ; (0x7528670 == 65536*128)
+		je finished
 
 
-	AESInit:   ;aes256_init(&ctx, key);
-	;
-	;
-	; uint8_t rcon = 1;
-    ;register uint8_t i;
 
-    ;for (i = 0; i < sizeof(ctx->key); i++) ctx->enckey[i] = ctx->deckey[i] = k[i];
+	tryKeyRange:
+		mov esi,[max] ; esi now has max value
+		cmp [min],esi ; min < max ?
+		je afterKeyRange ; jump to
 
-	;
+		add [min],1
 
-		mov [key],eax
-		mov [enckey],eax
-		mov [deckey],eax
-		mov edx,8
-	Iterator:   ;for (i = 8; --i;) aes_expandEncKey(ctx->deckey, &rcon);
-		cmp edx,0
+   		call addOneToKeys
+		cmp [nextByte],2 ; Set to 8 when serious
+
+		je finished
+
+
+   		jmp AESInit
+
+   		;
+   		;for (long i=min; i < max; i++) {
+			//DUMP("key: ", key, 32,0);
+
+		    ;aes256_init(&ctx, key);
+		    ;aes256_decrypt_ecb(&ctx,buf_t);
+
+
+   		;
+   		;
+
+afterKeyRange:
+		mov [min],esi ; min = max
+		add dword [max],0xffff ; max = max + 0xffff (65536)
+		add kInteger,1
+		cmp [KInteger],10 ; 10 number of iterations on writeToFile
+		je setKZero
+		jmp tryCombinations
+
+AESInit:
+
+	;set keys equal
+
+	mov edi,7 ;
+
+	AESInitExpandEncKey:   ;for (i = 8; --i;) aes_expandEncKey(ctx->deckey, &rcon);
+
+		cmp edi,0
 		je decrypt
-		push deckey
 		push rcon
+		push structI+64
 		call aes_expandEncKey
-		sub edx,1
-		jmp Iterator
+		sub edi,1
+		jmp AESInitExpandEncKey
 
 	decrypt:
-				push eax
+
 				push buf
-				call aes256_decrypt_ecb
-				add eax,1
-        		jmp tryKeyRange
+				push structTestKey
+				call aes256_decrypt_ecb ; void aes256_decrypt_ecb(aes256_context *ctx, uint8_t *buf)
+				jmp tryCombinations
 
 
-	tryCombinationsEnd:
+
+	finished:
+		call writeToFileASM
+		leave
 		ret
 
+	writeToFileASM:
+		push [max]
+		push [min]
+		call writeToFile
+		ret
 
+	setKZero:
+		mov [KInteger], 0
+		call writeToFileASM
+		jmp tryCombinations
 
+	addOneToKeys:
+		cmp [idx],256
+		je nextByteIt
+
+	setKeySum:
+		add [structTestKey+nextByte],1
+		add [structTestKey+32+nextByte],1
+		add [structTestKey+64+nextByte],1
+		add [idx],1
+
+		ret
+
+	nextByteIt:
+		add [nextByte],1
+		mov [idx], 0
+		jmp setKeySum
