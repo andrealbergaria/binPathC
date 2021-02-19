@@ -28,12 +28,10 @@
 #define limitsFile "keysTried"
 
 
-extern int nextByte;
+
 extern int max;
 extern int min;
 extern int tryCombsASM(char *);
-extern int tryRightKey(char *);
-extern void addOne(aes256_context *ctx,int idx);
 
 
 //#define DUMP(s,buf, sz)  {printf(s);                   \
@@ -79,36 +77,34 @@ void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii) {
 
 // cipher text to translate
 uint8_t writeToFile(int min,int max) {
-	char timeBuf[50];
-	utc_system_timestamp(timeBuf,50);
+	char timeBuf[100];
+	utc_system_timestamp(timeBuf,100);
 
-	char fmt[] = "Min : %i (%i bytes) , Max : %i (%i bytes), ::: %s";
+	FILE *stream;
+	char fmt[] = "Min : %i (%i bytes) , Max : %i (%i bytes), ::: %s\n";
 
-	int sizeOfFmt = sizeof(fmt);
+	char *buf = (char *) malloc(150);
 
-	char *buf = (char *) malloc (sizeof(fmt));
 
-	printf(fmt,min,bytesSize(min),max,bytesSize(max),timeBuf);
-
-	FILE *stream = fopen(limitsFile,"a+");
+	 stream = fopen("loggedKeys","a+");
 
 	if (stream == NULL) {
-		perror("\ndemo.c writeToFile fopen() error");
+	//	perror("\ndemo.c writeToFile fopen() error");
 		exit(-1);
 	}
 	sprintf(buf,fmt,min,bytesSize(min),max,bytesSize(max),timeBuf);
 
-	int numWrite = fwrite(buf,sizeOfFmt,stream);
+
+	unsigned int numWrite = fwrite(buf,1,strlen(buf),stream);
 
 	if (numWrite == 0) {
 		perror("demo.c writeToFile fwrite()");
 		exit(-1);
 	}
 	printf("[demo.c , writeToFile() ] %s ",buf);
-	printf("[demo.c , writeToFile() ] Wrote file %s (%i bytes) ... ",limitsFile,numWrite);
+	printf("[demo.c , writeToFile() ] Wrote file \"%s\" (%i bytes) ... \n","loggedKeys",numWrite);
 
 
-	return 0;
 
 }
 
@@ -240,10 +236,6 @@ int main (int argc, char *argv[])
     if (bytesRead != 16){
     	printf("\nDidnt read the cipherFile all the way up\n");
     	exit(-1);
-    }
-    else {
-    	printf("\nread %i bytes\n",bytesRead);
-
     }
 
     tryCombsASM(buf);

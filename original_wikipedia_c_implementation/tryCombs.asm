@@ -5,7 +5,7 @@
 	extern printf
 	extern writeToFile
 
-	extern idx;  //when idx==256, means next byte
+
 		global tryCombsASM
 		global min
 		global max
@@ -32,9 +32,11 @@ fmt:
 	str: db '\n Buf %s\n'
 
 
+KInteger: dd 0  ; used for printing , when multiple
+
 nextByte: dd 0 ;used for summing the next bytes of keys
 
-idx: dd 0
+idx: dd 0 ; use when finished
 
 structTestKey:
     istruc contextType
@@ -69,9 +71,8 @@ tryCombsASM:
 
 	tryCombinations: ; min, max {
 
-		cmp [max],0x7528670 ; (0x7528670 == 65536*128)
+		cmp DWORD [max],0x7528670 ; (0x7528670 == 65536*128)
 		je finished
-
 
 
 	tryKeyRange:
@@ -79,32 +80,20 @@ tryCombsASM:
 		cmp [min],esi ; min < max ?
 		je afterKeyRange ; jump to
 
-		add [min],1
+		add DWORD [min],1
 
    		call addOneToKeys
-		cmp [nextByte],2 ; Set to 8 when serious
+		cmp DWORD [nextByte],3 ; Set to 8 bytes when serious (8 dwords = 32bytes)
 
 		je finished
 
-
    		jmp AESInit
-
-   		;
-   		;for (long i=min; i < max; i++) {
-			//DUMP("key: ", key, 32,0);
-
-		    ;aes256_init(&ctx, key);
-		    ;aes256_decrypt_ecb(&ctx,buf_t);
-
-
-   		;
-   		;
 
 afterKeyRange:
 		mov [min],esi ; min = max
 		add dword [max],0xffff ; max = max + 0xffff (65536)
-		add kInteger,1
-		cmp [KInteger],10 ; 10 number of iterations on writeToFile
+		add DWORD [kInteger],1
+		cmp dword [KInteger],10 ; 10 number of iterations on writeToFile
 		je setKZero
 		jmp tryCombinations
 
@@ -119,7 +108,7 @@ AESInit:
 		cmp edi,0
 		je decrypt
 		push rcon
-		push structI+64
+		push structTestKey+64
 		call aes_expandEncKey
 		sub edi,1
 		jmp AESInitExpandEncKey
@@ -134,34 +123,51 @@ AESInit:
 
 
 	finished:
+
 		call writeToFileASM
-		leave
+		pop dword [ebp]
+
 		ret
 
 	writeToFileASM:
-		push [max]
-		push [min]
-		call writeToFile
+		push DWORD [max]
+		push DWORD [min]
+		call writeToFile  ;  push line 134, jmp to writetofile
 		ret
 
+;; call
+;PUSH Retaddr ; push return address on stack
+;JMP Label1
+;Retaddr:
+;
+;	RET
+;	pop eax
+;  jmp eax
+;
+;
+
+
 	setKZero:
-		mov [KInteger], 0
+		mov DWORD [KInteger], 0
 		call writeToFileASM
 		jmp tryCombinations
 
 	addOneToKeys:
-		cmp [idx],256
-		je nextByteIt
+		cmp DWORD [idx],256
+		je nextByteIt ;adds byte of key
 
 	setKeySum:
-		add [structTestKey+nextByte],1
-		add [structTestKey+32+nextByte],1
-		add [structTestKey+64+nextByte],1
-		add [idx],1
+		mov ebx,[nextByte]
+		add DWORD [structTestKey+ebx],1
+		add ebx,32
+		add DWORD [structTestKey+ebx],1
+		add ebx,32
+		add DWORD [structTestKey+ebx],1
+		add DWORD [idx],1
 
 		ret
 
 	nextByteIt:
-		add [nextByte],1
-		mov [idx], 0
+		add dword [nextByte],1
+		mov dword [idx], 0
 		jmp setKeySum
