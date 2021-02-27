@@ -107,3 +107,87 @@ int main() {
 	//printf("\n\n%p",print());
 
 }
+
+void longToCharArray(long l,uint8_t *key,int sizeOfKey) {
+	memset(key,0x0,sizeOfKey);
+	key[0] = l         & 0xFF;
+	key[1] = (l >>  8) & 0xFF;
+	key[2] = (l >> 16) & 0xFF;
+	key[3] = (l >> 24) & 0xFF;
+
+}
+
+
+long charArrayToLong(long l,int *key) {
+	l = key[0] | (key[1] << 8) | (key[2] << 16) | (key[3] << 24);
+	return l;
+
+
+}
+
+void tryCombinations(long min,long max,long interval) {
+	char *date = (char *) malloc(50);
+
+	utc_system_timestamp(date,50);
+	if (interval % 2 != 0) {
+		printf("\nInterval not multiple of 2...exiting");
+		exit(-1);
+	}
+
+	printf("\nBegin date %s",date);
+
+
+	int aux = 0;
+	for (int i=0; i < 131072; i++) {
+		tryKeyRange(min,max);
+
+
+		 min = max;
+		 max += interval;
+		 //	if (i == aux) {
+		 	//		writeToFile(min,max);
+		 	//		aux+=32768;
+		 	//	}
+	}
+	free(date);
+}
+
+uint8_t tryKeyRange(long min,long max) {
+		uint8_t *key = (uint8_t *) malloc(32);
+		uint8_t *buf_t = (uint8_t *) malloc(32);
+		aes256_context ctx;
+
+		for (long i=min; i < max; i++) {
+			longToCharArray(i,key,32);
+		    //DUMP("key: ", key, 32,0);
+
+		    aes256_init(&ctx, key);
+		    aes256_decrypt_ecb(&ctx,buf_t);
+		   // DUMP("dec: ", buf, 32,1);
+		    aes256_done(&ctx);
+		}
+		free(key);
+		free(buf_t);
+
+}
+int printBuf(unsigned char *buf) {
+	printf("\n");
+	for (int i=0; i < 16;i++) {
+    		printf(" %x ",*(buf+i));
+
+    	}
+    	printf("\n");
+
+
+}
+void DUMP(char *s,uint8_t *buf,int bufSize,char isAscii) {
+		printf("%s",s);
+		for (int i = 0; i < (bufSize);i++) {
+			if (isAscii==1)
+				printf("%c ",buf[i]);
+			else
+				printf("%02x ",buf[i]);
+
+		}
+		 printf("\n");
+}

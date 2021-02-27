@@ -7,8 +7,9 @@
 
 
 		global tryCombsASM
-		global min
-		global max
+		global writeToFileASM
+		;global min
+		;global max
 
 
 section .bss
@@ -25,32 +26,33 @@ endstruc
 
 	buf: resd 4
 
+;;;;;;;;;;;;;;;;;;
+; END SECTION BSS
+;;;;;;;;;;;;;;;;;
 
-section .data
+											section .data
 
 fmt:
 	str: db '\n Buf %s\n'
 
+max: dd 0xfff
+min: dd 0
+
 
 KInteger: dd 0  ; used for printing , when multiple
 
-nextByte: dd 0 ;used for summing the next bytes of keys
+nextIndex: dd 0 ;used for summing the next bytes of keys
 
 idx: dd 0 ; use when finished
 
 structTestKey:
     istruc contextType
-    	at key,    dd 0,0,0,0,0,0,0,0
+    	at key,    dd 0,0,0,0,0,0,0,0  ; use limits in one index, increment nextIndex, limits again
         at enckey, dd 0,0,0,0,0,0,0,0
         at deckey, dd 0,0,0,0,0,0,0,0
     iend
 
-			kInteger: dd 0  ; index of formula of multiple
-			min: dd 0
-			max: dd 0x0000ffff
 			rcon: dd 1
-
-
 
 ;MOV  destination, source
 
@@ -61,39 +63,39 @@ structTestKey:
 
 tryCombsASM:
 		push ebp
-		mov  ebp, esp
+		mov ebp,esp
+		mov eax, [ebp +4] ;buf
 
-		mov eax, [ebp + 8] ;buf
 		mov [buf] ,eax
-		;mov ebx ,eax  ;copy orginal buf to ebx
 
-	;*buf = &buf
+
+
 
 	tryCombinations: ; min, max {
 
-		cmp DWORD [max],0x7528670 ; (0x7528670 == 65536*128)
-		je finished
-
+		cmp DWORD [max],6553600 ; (65536*100)
+		je finishedHandler
+		mov esi,[max] ; esi now has max value
 
 	tryKeyRange:
-		mov esi,[max] ; esi now has max value
+
 		cmp [min],esi ; min < max ?
 		je afterKeyRange ; jump to
 
 		add DWORD [min],1
 
    		call addOneToKeys
-		cmp DWORD [nextByte],3 ; Set to 8 bytes when serious (8 dwords = 32bytes)
+		;cmp DWORD [nextByte],3 ; Set to 8 bytes when serious (8 dwords = 32bytes)
 
-		je finished
+		;je finishedHandler
 
    		jmp AESInit
 
 afterKeyRange:
 		mov [min],esi ; min = max
-		add dword [max],0xffff ; max = max + 0xffff (65536)
-		add DWORD [kInteger],1
-		cmp dword [KInteger],10 ; 10 number of iterations on writeToFile
+		add dword [max],0xfff ; max = max + 0xffff (65536)
+		add DWORD [KInteger],1
+		cmp dword [KInteger],100 ; 100 number of iterations on writeToFile
 		je setKZero
 		jmp tryCombinations
 
@@ -122,17 +124,19 @@ AESInit:
 
 
 
-	finished:
+finishedHandler:
 
 		call writeToFileASM
-		pop dword [ebp]
+		jmp finished
 
-		ret
+
 
 	writeToFileASM:
-		push DWORD [max]
-		push DWORD [min]
-		call writeToFile  ;  push line 134, jmp to writetofile
+		push dword [max]
+		push dword [min]
+		call writeToFile  ;  push line 136, jmp to writetofile
+		pop ebx
+		pop ebx
 		ret
 
 ;; call
@@ -153,7 +157,7 @@ AESInit:
 		jmp tryCombinations
 
 	addOneToKeys:
-		cmp DWORD [idx],256
+		cmp DWORD [idx],255
 		je nextByteIt ;adds byte of key
 
 	setKeySum:
@@ -171,3 +175,7 @@ AESInit:
 		add dword [nextByte],1
 		mov dword [idx], 0
 		jmp setKeySum
+
+finished:
+	leave
+	ret

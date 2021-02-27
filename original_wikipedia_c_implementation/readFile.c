@@ -6,6 +6,9 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+
+unsigned int readFile(char * , unsigned char *);
+
 unsigned int readFile(char *filename,unsigned char *buf) {
 	FILE *cipherFile;
 	int retValue;

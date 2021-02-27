@@ -6,6 +6,10 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+
+u_int32_t readFile(char *filename,uint8_t *buf);
+
+
 unsigned int readFile(char *filename,unsigned char *buf) {
 	FILE *cipherFile;
 	int retValue;
