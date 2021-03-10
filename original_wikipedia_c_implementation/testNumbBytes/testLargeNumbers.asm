@@ -8,9 +8,10 @@
 
 section .data
 	
-    key:     db 0,0
+    key:     dw 0,0
 	
 	fmt: db 0xa,'Buf %x , IDX : %x',0xa
+	
 		
 ;nasm testLargeNumbers.asm -g -F dwarf -f elf32 -o tryCombs.o
 section .text
@@ -29,24 +30,38 @@ main:
 		cmp ebx,2
 		je done
 		
-		cmp DWORD [key+ebx], 0xff
-		je incrementInterval
+		
 
-afterIncrementInterval:
-		add DWORD [key+ebx],1
+ebx1: ;begin and end of arrays of bytes ; begin is always 0 , ecx -> last byte ,ebx -> num of bytes
+					; [255...255...0]
+					ebx=2	ebx=1
+					; [255...0...0
+					;  ecx   ecx ; from 0 to 255 n times (n=ebx)
+					; starts with ebx=0, then ebx=0 and ebx=1 and ebx=0 and ebx=1 end ebx=2
+					; para cada ebx2, do ebx1
+		cmp word [key+ebx*2], 0xff
+		je end
 		
-		push ebx 
-		push dword [key+ebx] ; needs to mulitply by 4 because im only testing byte to byte (4 because the real func is int)
+		add word [key+ebx*2],1
+		jmp ebx1 
+		
+ebx2: 
+		cmp word [ key+ebx2*2],0xff
+		je end2
+		call ebx1
+		add word [key+ebx2*2],1
+		jmp ebx2 
+		
+		push ebx
+		push dword [key+ebx*2] ; needs to mulitply by 4 because im only testing byte to byte (4 because the real func is int)
 		push fmt
-		call printf
-	
-	
-		
+		call printf ;	fmt: db 0xa,'Buf %x , IDX : %x',0xa
+
 		jmp incrementFF
 			
 incrementInterval:
-		inc ebx
-		jmp afterIncrementInterval
+		add ebx,1
+		jmp incrementFF
 
 		
 		
